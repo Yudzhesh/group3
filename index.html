@@ -9,49 +9,106 @@
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   body { font-family: 'Lora', serif; background: #F4F6F8; color: #2C3338; margin: 0; padding: 0; line-height: 1.6; }
+  
+  /* Экраны */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* --- ЭКРАН ВХОДА --- */
+  #login-screen {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #E0F2F1 0%, #F4F6F8 100%);
+  }
+
+  .login-box {
+    background: #fff;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+  }
+
+  .login-box h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 24px;
+    color: #1AA6C4;
+    margin-bottom: 10px;
+  }
+
+  .login-box p {
+    color: #6B7785;
+    margin-bottom: 30px;
+    font-size: 15px;
+  }
+
+  .btn-open {
+    font-family: 'Montserrat', sans-serif;
+    background: #1AA6C4;
+    color: #fff;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 30px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    transition: background 0.3s;
+    box-shadow: 0 4px 15px rgba(26,166,196,0.3);
+  }
+
+  .btn-open:hover { background: #158AA3; }
+
+  #pass-container {
+    display: none;
+    margin-top: 20px;
+  }
+
+  .pass-input {
+    font-family: 'Montserrat', sans-serif;
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #E4E8EB;
+    border-radius: 12px;
+    font-size: 16px;
+    margin-bottom: 15px;
+    outline: none;
+    text-align: center;
+    transition: border-color 0.2s;
+  }
+
+  .pass-input:focus { border-color: #1AA6C4; }
+
+  .error-msg {
+    color: #E53935;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    margin-top: 10px;
+    display: none;
+  }
+
+  /* --- ЭКРАН УРОКОВ --- */
   .header { background: #1AA6C4; color: #fff; padding: 16px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(26, 166, 196, 0.2); }
   .brand { font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 600; }
   .brand span { font-weight: 400; opacity: 0.8; }
   .container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
-  h1 { font-family: 'Montserrat', sans-serif; font-size: 28px; font-weight: 600; margin-bottom: 30px; color: #2C3338; }
+  h1.page-title { font-family: 'Montserrat', sans-serif; font-size: 28px; font-weight: 600; margin-bottom: 30px; color: #2C3338; }
   
-  /* Блок предмета */
   .subject-section { margin-bottom: 40px; }
-  .subject-title { 
-    font-family: 'Montserrat', sans-serif; 
-    font-size: 22px; 
-    font-weight: 600; 
-    color: #1AA6C4; 
-    border-bottom: 2px solid #E4E8EB; 
-    padding-bottom: 10px; 
-    margin-bottom: 20px; 
-  }
+  .subject-title { font-family: 'Montserrat', sans-serif; font-size: 22px; font-weight: 600; color: #1AA6C4; border-bottom: 2px solid #E4E8EB; padding-bottom: 10px; margin-bottom: 20px; }
 
-  /* Подзаголовки (6-7 класс и 7 класс) */
   .grade-title {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 15px;
-    font-weight: 600;
-    color: #6B7785;
-    margin: 25px 0 15px 0;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    font-family: 'Montserrat', sans-serif; font-size: 15px; font-weight: 600;
+    color: #6B7785; margin: 25px 0 15px 0; display: flex; align-items: center; gap: 10px;
   }
-  .grade-title::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: #E4E8EB;
-  }
-  .grade-title.hardcore {
-    color: #8E24AA;
-  }
-  .grade-title.hardcore::after {
-    background: #E1BEE7;
-  }
+  .grade-title::after { content: ''; flex: 1; height: 1px; background: #E4E8EB; }
+  .grade-title.hardcore { color: #8E24AA; }
+  .grade-title.hardcore::after { background: #E1BEE7; }
 
-  /* Карточка урока */
   .lesson-card { 
     background: #fff; border-radius: 12px; padding: 20px; margin-bottom: 12px; 
     box-shadow: 0 2px 10px rgba(0,0,0,0.03); display: flex; justify-content: space-between; 
@@ -60,155 +117,154 @@
   }
   .lesson-card:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
   
-  /* Карточка для 7 класса */
-  .lesson-card.hardcore-card { 
-    border-left: 4px solid #8E24AA; 
-    background: #FCFAFF;
-  }
-  .lesson-card.hardcore-card:hover {
-    box-shadow: 0 4px 15px rgba(142, 36, 170, 0.1);
-  }
+  .lesson-card.hardcore-card { border-left: 4px solid #8E24AA; background: #FCFAFF; }
+  .lesson-card.hardcore-card:hover { box-shadow: 0 4px 15px rgba(142, 36, 170, 0.1); }
 
   .lesson-info { flex: 1; }
-  
-  .lesson-date { 
-    font-family: 'Montserrat', sans-serif; 
-    font-size: 13px; 
-    font-weight: 500; 
-    color: #6B7785; 
-    margin-bottom: 4px; 
-  }
-  
-  .lesson-name { 
-    font-family: 'Montserrat', sans-serif; 
-    font-size: 18px; 
-    font-weight: 500; 
-    color: #3b4a54; 
-    line-height: 1.4;
-  }
+  .lesson-date { font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 500; color: #6B7785; margin-bottom: 4px; }
+  .lesson-name { font-family: 'Montserrat', sans-serif; font-size: 18px; font-weight: 500; color: #3b4a54; line-height: 1.4; }
   
   .btn-go { 
-    font-family: 'Montserrat', sans-serif; 
-    font-size: 14px; 
-    font-weight: 500; 
-    color: #1AA6C4; 
-    background: #F0F7FA; 
-    padding: 10px 20px; 
-    border-radius: 20px; 
-    white-space: nowrap; 
-    margin-left: 20px;
-    transition: background 0.2s;
+    font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 500; 
+    color: #1AA6C4; background: #F0F7FA; padding: 10px 20px; border-radius: 20px; 
+    white-space: nowrap; margin-left: 20px; transition: background 0.2s;
   }
   .lesson-card:hover .btn-go { background: #E0F0F7; }
 
-  .hardcore-card .btn-go {
-    color: #8E24AA;
-    background: #F6F2FA;
-  }
-  .hardcore-card:hover .btn-go {
-    background: #EDE7F6;
-  }
+  .hardcore-card .btn-go { color: #8E24AA; background: #F6F2FA; }
+  .hardcore-card:hover .btn-go { background: #EDE7F6; }
 </style>
 </head>
 <body>
-  <div class="header">
-    <div class="brand">Северное Сияние <span>· Ученик</span></div>
-  </div>
-  
-  <div class="container">
-    <h1>Материалы уроков · Группа 3</h1>
 
-    <!-- РУССКИЙ ЯЗЫК -->
-    <div class="subject-section">
-      <div class="subject-title">Русский язык</div>
+  <!-- ЭКРАН 1: ВХОД -->
+  <div id="login-screen" class="screen active">
+    <div class="login-box">
+      <h1>Материалы уроков · Группа 3</h1>
+      <p>Для доступа к материалам требуется пароль.</p>
       
-      <div class="grade-title">6–7 класс</div>
-      <a href="lessons/russian-19-10-narechie.html" class="lesson-card">
-        <div class="lesson-info">
-          <div class="lesson-date">19 октября</div>
-          <div class="lesson-name">Наречие: разряды, правописание, тренажер</div>
-        </div>
-        <div class="btn-go">Открыть</div>
-      </a>
-    </div>
-
-    <!-- ИСТОРИЯ -->
-    <div class="subject-section">
-      <div class="subject-title">История</div>
+      <button class="btn-open" id="btn-show-pass">Открыть уроки (Группа 3)</button>
       
-      <div class="grade-title">6–7 класс</div>
-      <a href="lessons/history-19-10-ancient-india.html" class="lesson-card">
-        <div class="lesson-info">
-          <div class="lesson-date">19 октября</div>
-          <div class="lesson-name">Древняя Индия: природа и люди</div>
-        </div>
-        <div class="btn-go">Открыть</div>
-      </a>
+      <div id="pass-container">
+        <input type="password" class="pass-input" id="pass-input" placeholder="Введите пароль" autocomplete="off">
+        <button class="btn-open" id="btn-submit">Войти</button>
+        <div class="error-msg" id="error-msg">Неверный пароль. Попробуйте снова.</div>
+      </div>
     </div>
-
-    <!-- МАТЕМАТИКА (АЛГЕБРА) -->
-    <div class="subject-section">
-      <div class="subject-title">Математика · Алгебра</div>
-      
-      <!-- 6-7 класс -->
-      <div class="grade-title">6–7 класс</div>
-      <a href="lessons/algebra-19-10-zadachi-na-drobi.html" class="lesson-card">
-        <div class="lesson-info">
-          <div class="lesson-date">19 октября</div>
-          <div class="lesson-name">Задачник: текстовые задачи на дроби</div>
-        </div>
-        <div class="btn-go">Открыть</div>
-      </a>
-
-      <a href="lessons/trainer-drobi.html" class="lesson-card">
-        <div class="lesson-info">
-          <div class="lesson-date">Интерактивный тренажёр</div>
-          <div class="lesson-name">Обыкновенные дроби: от разложения до умножения</div>
-        </div>
-        <div class="btn-go">Открыть</div>
-      </a>
-
-      <!-- 7 класс -->
-      <!-- Убрали "(углубление)", оставили просто "7 класс" -->
-      <div class="grade-title hardcore">7 класс</div>
-      <a href="lessons/algebra-19-10-uravneniya-drobi-7klass.html" class="lesson-card hardcore-card">
-        <div class="lesson-info">
-          <div class="lesson-date">19 октября · 12:45</div>
-          <div class="lesson-name">Дроби в уравнениях и алгебраических выражениях</div>
-        </div>
-        <div class="btn-go">Открыть</div>
-      </a>
-    </div>
-
   </div>
 
-  <!-- СКРИПТ ДЛЯ ПРОВЕРКИ ПАРОЛЯ -->
-  <script>
-    (function() {
-      const correctPassword = "rocket2026";
-      const storageKey = "group3_access_granted";
-      
-      // Проверяем, заходил ли уже пользователь
-      const isUnlocked = localStorage.getItem(storageKey);
+  <!-- ЭКРАН 2: УРОКИ -->
+  <div id="lessons-screen" class="screen">
+    <div class="header">
+      <div class="brand">Северное Сияние <span>· Ученик</span></div>
+    </div>
+    
+    <div class="container">
+      <h1 class="page-title">Материалы уроков · Группа 3</h1>
 
-      if (isUnlocked !== "true") {
-        let pass = prompt("🔒 Введите пароль для доступа к материалам:");
+      <!-- РУССКИЙ ЯЗЫК -->
+      <div class="subject-section">
+        <div class="subject-title">Русский язык</div>
+        <div class="grade-title">6–7 класс</div>
+        <a href="lessons/russian-19-10-narechie.html" class="lesson-card">
+          <div class="lesson-info">
+            <div class="lesson-date">19 октября</div>
+            <div class="lesson-name">Наречие: разряды, правописание, тренажер</div>
+          </div>
+          <div class="btn-go">Открыть</div>
+        </a>
+      </div>
+
+      <!-- ИСТОРИЯ -->
+      <div class="subject-section">
+        <div class="subject-title">История</div>
+        <div class="grade-title">6–7 класс</div>
+        <a href="lessons/history-19-10-ancient-india.html" class="lesson-card">
+          <div class="lesson-info">
+            <div class="lesson-date">19 октября</div>
+            <div class="lesson-name">Древняя Индия: природа и люди</div>
+          </div>
+          <div class="btn-go">Открыть</div>
+        </a>
+      </div>
+
+      <!-- МАТЕМАТИКА (АЛГЕБРА) -->
+      <div class="subject-section">
+        <div class="subject-title">Математика · Алгебра</div>
         
-        if (pass === correctPassword) {
-          // Запоминаем успешный вход
-          localStorage.setItem(storageKey, "true");
-        } else {
-          // Если пароль неверный или нажали отмену — блокируем контент
-          document.body.innerHTML = `
-            <div style="text-align: center; margin-top: 100px; font-family: 'Montserrat', sans-serif; padding: 20px;">
-              <h1 style="color: #E53935; font-size: 32px; margin-bottom: 15px;">Доступ запрещен</h1>
-              <p style="color: #6B7785; font-size: 18px;">Вы ввели неправильный пароль.</p>
-              <p style="color: #6B7785; font-size: 16px; margin-top: 10px;">Обновите страницу, чтобы попробовать снова.</p>
-            </div>
-          `;
-        }
+        <div class="grade-title">6–7 класс</div>
+        <a href="lessons/algebra-19-10-zadachi-na-drobi.html" class="lesson-card">
+          <div class="lesson-info">
+            <div class="lesson-date">19 октября</div>
+            <div class="lesson-name">Задачник: текстовые задачи на дроби</div>
+          </div>
+          <div class="btn-go">Открыть</div>
+        </a>
+
+        <a href="lessons/trainer-drobi.html" class="lesson-card">
+          <div class="lesson-info">
+            <div class="lesson-date">Интерактивный тренажёр</div>
+            <div class="lesson-name">Обыкновенные дроби: от разложения до умножения</div>
+          </div>
+          <div class="btn-go">Открыть</div>
+        </a>
+
+        <div class="grade-title hardcore">7 класс</div>
+        <a href="lessons/algebra-19-10-uravneniya-drobi-7klass.html" class="lesson-card hardcore-card">
+          <div class="lesson-info">
+            <div class="lesson-date">19 октября · 12:45</div>
+            <div class="lesson-name">Дроби в уравнениях и алгебраических выражениях</div>
+          </div>
+          <div class="btn-go">Открыть</div>
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // Пароль
+    const CORRECT_PASSWORD = "rocket2026";
+
+    // Элементы
+    const loginScreen = document.getElementById('login-screen');
+    const lessonsScreen = document.getElementById('lessons-screen');
+    const btnShowPass = document.getElementById('btn-show-pass');
+    const passContainer = document.getElementById('pass-container');
+    const passInput = document.getElementById('pass-input');
+    const btnSubmit = document.getElementById('btn-submit');
+    const errorMsg = document.getElementById('error-msg');
+
+    // 1. Показ поля для пароля
+    btnShowPass.addEventListener('click', () => {
+      btnShowPass.style.display = 'none';
+      passContainer.style.display = 'block';
+      passInput.focus();
+    });
+
+    // 2. Проверка пароля
+    function checkPassword() {
+      if (passInput.value === CORRECT_PASSWORD) {
+        // Пароль верный — переключаем экран
+        loginScreen.classList.remove('active');
+        lessonsScreen.classList.add('active');
+      } else {
+        // Ошибка
+        errorMsg.style.display = 'block';
+        passInput.value = ''; // Очищаем поле
+        passInput.focus();
       }
-    })();
+    }
+
+    // Обработка нажатия на кнопку "Войти"
+    btnSubmit.addEventListener('click', checkPassword);
+
+    // Обработка нажатия клавиши Enter в поле ввода
+    passInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        checkPassword();
+      }
+    });
   </script>
 </body>
 </html>
