@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Древняя Индия · Северное Сияние</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #1AA6C4; --primary-dark: #158AA3; --bg-body: #F4F6F8; --bg-card: #FFFFFF;
+    --text-main: #2C3338; --text-muted: #6B7785; --border: #E4E8EB;
+    --theory-bg: #F0F7FA; --theory-border: #1AA6C4; --example-bg: #F4F9F0; --example-border: #7A9A6A;
+    --success: #4CAF50; --error: #E53935;
+    --teacher-pink: #FDF2F8; --teacher-pink-border: #D81B60; --solution-bg: #F8F9FA;
+    --hardcore: #8E24AA; --hardcore-bg: #F6F2FA;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  body { font-family: 'Lora', Georgia, serif; background: var(--bg-body); color: var(--text-main); line-height: 1.75; font-size: 17px; padding-bottom: 80px; }
+
+  .top-bar { background: var(--primary); color: #fff; padding: 16px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(26, 166, 196, 0.2); position: sticky; top: 0; z-index: 100; }
+  .brand { font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 700; }
+  .brand span { font-weight: 400; opacity: 0.8; }
+  .header-right { display: flex; align-items: center; gap: 20px; }
+  .back-link { font-family: 'Montserrat', sans-serif; font-size: 14px; color: #fff; text-decoration: none; font-weight: 500; opacity: 0.8; transition: opacity 0.2s; }
+  .back-link:hover { opacity: 1; }
+  .stats { display: flex; gap: 12px; font-family: 'Montserrat', sans-serif; font-size: 14px; }
+  .stat-item { background: rgba(255, 255, 255, 0.15); padding: 6px 14px; border-radius: 20px; }
+
+  .container { max-width: 900px; margin: 30px auto; background: var(--bg-card); border-radius: 16px; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05); overflow: hidden; }
+
+  .tabs-nav { display: flex; flex-wrap: wrap; justify-content: center; background: #F9FBFC; border-bottom: 1px solid var(--border); padding: 0 10px; }
+  .tab-btn { font-family: 'Montserrat', sans-serif; background: transparent; border: none; padding: 15px 12px; font-size: 14px; font-weight: 600; color: var(--text-muted); cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s; white-space: nowrap; }
+  .tab-btn:hover { color: var(--primary); }
+  .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+  .tab-btn.hardcore-tab { color: var(--hardcore); }
+  .tab-btn.hardcore-tab.active { color: var(--hardcore); border-bottom-color: var(--hardcore); background: var(--hardcore-bg); }
+
+  .lesson-content { padding: 30px; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  .theory { background: var(--theory-bg); border-left: 4px solid var(--theory-border); border-radius: 0 8px 8px 0; padding: 16px 20px; margin-bottom: 20px; font-size: 16px; }
+  .example { background: var(--example-bg); border-left: 4px solid var(--example-border); border-radius: 0 8px 8px 0; padding: 16px 20px; margin-bottom: 20px; }
+  .block-label { font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 1px; color: var(--text-muted); }
+
+  .img-block { margin: 22px 0; text-align: center; background: #fff; padding: 15px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
+  .img-block img { max-width: 100%; height: auto; max-height: 300px; border-radius: 6px; }
+  .caption { font-size: 13px; color: var(--text-muted); font-style: italic; margin-top: 10px; }
+
+  .task-block { margin-bottom: 24px; background: #fff; padding: 24px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+  .task-question { font-family: 'Montserrat', sans-serif; font-size: 17px; font-weight: 600; margin-bottom: 16px; color: #1A2024; line-height: 1.5; }
+  .input-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .input-answer { font-family: 'Lora', serif; font-size: 16px; padding: 12px 18px; border: 2px solid var(--border); border-radius: 8px; outline: none; width: 100%; max-width: 350px; transition: border-color 0.2s; }
+  .input-answer:focus { border-color: var(--primary); }
+
+  .options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+  .option-btn { font-family: 'Lora', serif; font-size: 16px; text-align: left; padding: 12px 18px; background: #fff; border: 2px solid var(--border); border-radius: 8px; cursor: pointer; transition: all 0.2s; color: var(--text-main); }
+  .option-btn:hover { border-color: var(--primary); background: #F9FBFC; }
+  .option-btn.selected { border-color: var(--primary); background: var(--theory-bg); }
+  .option-btn.correct { border-color: var(--success); background: #EBF7EB; }
+  .option-btn.incorrect { border-color: var(--error); background: #FDEDED; }
+  .option-btn:disabled { cursor: default; }
+
+  .btn { font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 600; padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+  .btn-primary { background: var(--primary); color: #fff; }
+  .btn-primary:hover { background: var(--primary-dark); }
+  .btn-hardcore { background: var(--hardcore); color: #fff; }
+  .btn-hardcore:hover { background: #7B1FA2; }
+  .btn-solution { background: #fff; color: var(--text-muted); border: 2px solid var(--border); }
+  .btn-solution:hover { background: #F4F6F8; color: var(--text-main); border-color: #B3BAC1; }
+
+  .feedback { margin-top: 16px; padding: 12px 16px; border-radius: 8px; font-family: 'Montserrat', sans-serif; font-size: 15px; display: none; }
+  .feedback.show { display: block; }
+  .feedback.success { background: #EBF7EB; color: #2E7D32; border-left: 4px solid var(--success); }
+  .feedback.error { background: #FDEDED; color: #C62828; border-left: 4px solid var(--error); }
+
+  .solution-panel { display: none; margin-top: 16px; padding: 16px 20px; background: var(--solution-bg); border: 1px dashed #B3BAC1; border-radius: 8px; font-size: 15px; line-height: 1.6; }
+  .solution-panel.show { display: block; }
+  
+  .answer { display: none; background: var(--teacher-pink); border-left: 5px solid var(--teacher-pink-border); padding: 12px 16px; border-radius: 0 8px 8px 0; margin-top: 16px; font-size: 15px; color: #880E4F; }
+  body.teacher-mode .answer { display: block; }
+
+  .teacher-only-block { display: none; background: #FFF8E1; border: 2px dashed #FFB300; border-radius: 12px; padding: 24px; margin-top: 20px; }
+  body.teacher-mode .teacher-only-block { display: block; }
+  .student-only-block { display: block; }
+  body.teacher-mode .student-only-block { display: none; }
+
+  .trainer-box { background: var(--hardcore-bg); border: 2px solid var(--hardcore); border-radius: 16px; padding: 24px; margin-top: 20px; }
+  .trainer-question { font-size: 18px; margin-bottom: 20px; font-weight: 600; }
+
+  .test-header { display: flex; justify-content: space-between; align-items: center; background: var(--theory-bg); padding: 15px 20px; border-radius: 12px; margin-bottom: 20px; }
+  .test-progress { font-family: 'Montserrat', sans-serif; font-size: 15px; font-weight: 600; color: var(--primary); }
+  .test-tries { font-family: 'Montserrat', sans-serif; font-size: 14px; color: var(--text-muted); }
+  .test-result { text-align: center; padding: 40px 20px; }
+  .test-result h2 { font-family: 'Montserrat', sans-serif; font-size: 24px; color: var(--primary); margin-bottom: 15px; }
+
+  .homework-box { background: #E3F2FD; border: 2px solid #1E88E5; border-radius: 16px; padding: 24px; margin-top: 20px; }
+  .homework-box h3 { font-family: 'Montserrat', sans-serif; color: #1565C0; margin-bottom: 15px; font-size: 18px; }
+  .vznanie-phrase { background: #FFF; padding: 15px; border-radius: 8px; border-left: 4px solid #D81B60; font-weight: 600; color: #880E4F; }
+
+  @media (max-width: 768px) { 
+    .container { margin: 0; border-radius: 0; } .lesson-content { padding: 15px; }
+    .top-bar { padding: 15px 20px; flex-direction: column; gap: 10px; align-items: flex-start; } 
+    .stats { flex-wrap: wrap; }
+    .input-row { flex-direction: column; align-items: stretch; }
+    .btn { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top-bar">
+  <div class="brand">Северное Сияние <span>· История</span></div>
+  <div class="header-right">
+    <a href="../index.html" class="back-link">&larr; К списку уроков</a>
+    <div class="stats">
+      <div class="stat-item">✅ Верно: <strong id="score">0</strong></div>
+      <div class="stat-item">📝 Попыток: <strong id="attempts">0</strong></div>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <div class="tabs-nav" id="tabs-nav">
+    <button class="tab-btn active" onclick="switchTab(0)">1. География и природа</button>
+    <button class="tab-btn" onclick="switchTab(1)">2. Занятия и общество</button>
+    <button class="tab-btn" onclick="switchTab(2)">3. Наследие</button>
+    <button class="tab-btn hardcore-tab" onclick="switchTab(3)">Тренажер ⚡</button>
+    <button class="tab-btn" onclick="switchTab(4)">Ривин 📖</button>
+    <button class="tab-btn" onclick="switchTab(5)">Самостоятельная 🏠</button>
+    <button class="tab-btn" onclick="switchTab(6)" style="color:#D84315;">Зачёт 🏆</button>
+  </div>
+
+  <div class="lesson-content">
+    
+    <!-- ВКЛАДКА 1: ГЕОГРАФИЯ -->
+    <div class="tab-content active" id="tab-0">
+      <div class="theory">
+        <div class="block-label">Теория</div>
+        Древняя Индия располагалась на полуострове <strong>Индостан</strong>. С севера путь врагам и холодным ветрам преграждают высочайшие в мире горы — <strong>Гималаи</strong>. Благодаря им климат в Индии жаркий и влажный.
+        <br><br>
+        Главные артерии страны — реки <strong>Инд</strong> и <strong>Ганг</strong>. Они берут начало в горах, несут плодородный ил и воду для полей. Но природа здесь не только кормила, но и пугала: густые, непроходимые <strong>джунгли</strong> кишели опасными зверями и змеями.
+      </div>
+      
+      <div class="img-block">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/f/ff/Ancient_india.png" alt="Карта Древней Индии">
+        <p class="caption">Карта основных регионов Древней Индии (Wikimedia Commons)</p>
+      </div>
+
+      <div class="example">
+        <div class="block-label">Жизненный уклад</div>
+        Индийцы селились в долинах рек. Вода давала жизнь, но требовала труда: нужно было строить каналы и дамбы, чтобы спастись от разрушительных разливов во время муссонных дождей.
+      </div>
+
+      <div class="task-block">
+        <div class="task-question">Задача 1. Какие горы защищают Индию с севера? (Введите название)</div>
+        <div class="input-row">
+          <input type="text" class="input-answer" id="in-0-0" placeholder="Название гор">
+          <button class="btn btn-primary" onclick="checkAns('0-0', 'гималаи')">Проверить</button>
+        </div>
+        <div class="feedback" id="fb-0-0"></div>
+        <div class="answer"><strong>Ответ:</strong> Гималаи.</div>
+      </div>
+
+      <div class="task-block">
+        <div class="task-question">Задача 2. Какие две главные реки Индии? (Введите через запятую)</div>
+        <div class="input-row">
+          <input type="text" class="input-answer" id="in-0-1" placeholder="Названия рек">
+          <button class="btn btn-primary" onclick="checkAns('0-1', 'инд, ганг')">Проверить</button>
+        </div>
+        <div class="feedback" id="fb-0-1"></div>
+        <div class="answer"><strong>Ответ:</strong> Инд и Ганг.</div>
+      </div>
+    </div>
+
+    <!-- ВКЛАДКА 2: ЗАНЯТИЯ И ОБЩЕСТВО -->
+    <div class="tab-content" id="tab-1">
+      <div class="theory">
+        <div class="block-label">Теория</div>
+        Главное занятие — <strong>земледелие</strong>. Выращивали рис, пшеницу, хлопок и сахарный тростник. Индийцы первыми в мире начали выращивать хлопок и делать из него ткани.
+        <br><br>
+        В джунглях приручили <strong>слонов</strong>. Они стали «живыми тракторами» и боевыми машинами.
+        <br><br>
+        Общество делилось на <strong>варны</strong> (касты): брахманы (жрецы), кшатрии (воины), вайшьи (земледельцы) и шудры (слуги). Перейти из одной варны в другую было невозможно.
+      </div>
+
+      <div class="img-block">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/9/98/Elephas_maximus_%28Bandipur%29.jpg" alt="Индийский слон">
+        <p class="caption">Индийский слон — незаменимый помощник в хозяйстве (Wikimedia Commons)</p>
+      </div>
+
+      <div class="task-block">
+        <div class="task-question">Задача 1. Какое животное в Древней Индии считалось священным и его запрещалось убивать?</div>
+        <div class="options" id="q-1-0">
+          <button class="option-btn" onclick="selectOpt('1-0', this, 'A')">А) Слон</button>
+          <button class="option-btn" onclick="selectOpt('1-0', this, 'B')">Б) Корова</button>
+          <button class="option-btn" onclick="selectOpt('1-0', this, 'C')">В) Тигр</button>
+        </div>
+        <button class="btn btn-primary" onclick="checkOpt('1-0', 'B')">Проверить</button>
+        <div class="feedback" id="fb-1-0"></div>
+        <div class="answer"><strong>Ответ:</strong> Б. Корова давала молоко и считалась священной.</div>
+      </div>
+    </div>
+
+    <!-- ВКЛАДКА 3: НАСЛЕДИЕ -->
+    <div class="tab-content" id="tab-2">
+      <div class="theory">
+        <div class="block-label">Теория: Вклад в мировую культуру</div>
+        1. <strong>Математика:</strong> Современные цифры (которые мы называем арабскими) на самом деле изобрели в Индии. Там же придумали <strong>ноль</strong>.
+        <br><br>
+        2. <strong>Игры:</strong> Индия — родина шахмат. Игра была придумана для воинов, чтобы развивать стратегическое мышление.
+        <br><br>
+        3. <strong>Медицина:</strong> Индийские лекари умели делать сложные операции и знали целебные свойства трав.
+      </div>
+
+      <div class="task-block">
+        <div class="task-question">Задача 1. Что из перечисленного было изобретено в Древней Индии?</div>
+        <div class="options" id="q-2-0">
+          <button class="option-btn" onclick="selectOpt('2-0', this, 'A')">А) Шахматы и ноль</button>
+          <button class="option-btn" onclick="selectOpt('2-0', this, 'B')">Б) Бумага и компас</button>
+          <button class="option-btn" onclick="selectOpt('2-0', this, 'C')">В) Порох</button>
+        </div>
+        <button class="btn btn-primary" onclick="checkOpt('2-0', 'A')">Проверить</button>
+        <div class="feedback" id="fb-2-0"></div>
+        <div class="answer"><strong>Ответ:</strong> А. Бумага и порох изобретены в Китае.</div>
+      </div>
+    </div>
+
+    <!-- ВКЛАДКА 4: ТРЕНАЖЕР -->
+    <div class="tab-content" id="tab-3">
+      <div class="trainer-box">
+        <h3 style="font-family: 'Montserrat'; color: var(--hardcore); margin-bottom: 15px;">⚡ Тренажер по Древней Индии</h3>
+        <p style="margin-bottom: 20px;">Задания генерируются случайно. Ограничений по времени нет.</p>
+        
+        <div class="task-block" style="border-color: var(--hardcore);">
+          <div class="trainer-question" id="trainer-q">Загрузка...</div>
+          <div class="input-row">
+            <input type="text" class="input-answer" id="trainer-in" placeholder="Введите ответ">
+            <button class="btn btn-hardcore" onclick="checkTrainer()">Проверить</button>
+            <button class="btn btn-next" style="background:#fff; color:var(--hardcore); border:2px solid var(--hardcore);" onclick="nextTrainer()">Другая &rarr;</button>
+          </div>
+          <div class="feedback" id="fb-trainer"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ВКЛАДКА 5: РИВИН -->
+    <div class="tab-content" id="tab-4">
+      
+      <div class="student-only-block">
+        <div class="theory" style="background: #FFF8E1; border-color: #FFB300;">
+          <div class="block-label" style="color: #F57F17;">Инструкция для ученика</div>
+          <p style="font-size: 18px; margin-bottom: 15px;">Наставник раздаст Вам текст. Работаем по методике Ривина:</p>
+          <ol>
+            <li>Прочитайте абзац.</li>
+            <li>Сформулируйте главную мысль одним предложением.</li>
+            <li>Дайте название абзацу одним словом.</li>
+            <li>Перескажите кратко.</li>
+            <li>Задайте вопрос группе.</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="teacher-only-block">
+        <h3 style="color: #F57F17; margin-bottom: 15px; font-family: 'Montserrat';">Материалы и инструкции для наставника</h3>
+        
+        <h4 style="margin-top: 15px; margin-bottom: 10px;">Движение урока (Тайминг)</h4>
+        <ul style="margin-bottom: 20px;">
+          <li><strong>Вход (5 мин):</strong> Субъектностный запрос. Спросите: «Как природа может диктовать людям, как им жить?»</li>
+          <li><strong>Микротемы 1-3 (15 мин):</strong> Самостоятельное изучение вкладок с задачами.</li>
+          <li><strong>Методика Ривина (15 мин):</strong> Чтение текста в общем зале (текст ниже).</li>
+          <li><strong>Тренажер и Зачет (10 мин):</strong> Отработка и проверка.</li>
+          <li><strong>Самостоятельная работа (5 мин):</strong> Объяснение заданий на дом.</li>
+        </ul>
+
+        <h4 style="margin-top: 15px; margin-bottom: 10px;">Текст для методики Ривина</h4>
+        <div style="background: #FFF; padding: 20px; border-radius: 8px; border-left: 4px solid #FFB300; font-style: italic; line-height: 1.8;">
+          Индия — страна контрастов. С севера её защищают Гималаи — самые высокие горы мира. Они не пускают холодные ветры, поэтому в Индии круглый год тепло. Но главное богатство — это реки. Инд и Ганг несут воду и плодородный ил. Люди селились по берегам, чтобы выращивать рис, пшеницу и хлопок. Однако природа здесь не всегда добра: джунгли полны опасностей — тигры, змеи, непроходимые леса. Индийцы научились жить в гармонии с природой. Они приручили слонов, которые стали незаменимыми помощниками в хозяйстве, и почитают корову как священное животное. Именно здесь, в долинах великих рек, родилась одна из самых ярких цивилизаций древности.
+        </div>
+        
+        <div style="background: #E8F5E9; border-left: 4px solid #4CAF50; padding: 12px; margin-top: 15px; color: #2E7D32;">
+          <strong>Ключи для проверки:</strong> Главная мысль — природа Индии разнообразна и требует от человека приспособления. Примеры вопросов для группы: «Как вы думаете, почему индийцы не боролись с джунглями, а приспосабливались к ним?», «Какое значение имели реки для развития государства?».
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ВКЛАДКА 6: САМОСТОЯТЕЛЬНАЯ РАБОТА -->
+    <div class="tab-content" id="tab-5">
+      <div class="homework-box">
+        <h3>Самостоятельная работа</h3>
+        <p style="margin-bottom: 15px;">Выполните следующие задания письменно в тетради:</p>
+        <ul>
+          <li><strong>Задание 1.</strong> Нарисуйте карту-схему Древней Индии. Отметьте Гималаи, реки Инд и Ганг, а также места, где росли джунгли.</li>
+          <li><strong>Задание 2.</strong> Напишите краткий конспект (3-4 предложения) о том, как природные условия влияли на занятия древних индийцев.</li>
+          <li><strong>Задание 3 (дополнительно).</strong> Составьте 2 вопроса по теме «Наследие Древней Индии» для одноклассников.</li>
+        </ul>
+        <div class="vznanie-phrase">
+          Сфотографируйте классную работу в тетради по истории и загрузите фото на платформу Взнание вместе с выполнением самостоятельной работы.
+        </div>
+      </div>
+    </div>
+
+    <!-- ВКЛАДКА 7: ЗАЧЁТ -->
+    <div class="tab-content" id="tab-6">
+      <div id="test-start-view" style="text-align: center; padding: 40px 20px;">
+        <h2 style="font-family:'Montserrat'; color:var(--primary); margin-bottom:15px;">Зачёт по Древней Индии</h2>
+        <p style="margin-bottom:20px; color:#666;">5 вопросов из базы. На каждый дается 2 попытки.</p>
+        <button class="btn btn-primary" onclick="startQuiz()" style="font-size: 18px; padding: 15px 40px;">Начать зачёт</button>
+      </div>
+      <div id="test-question-view" style="display: none;">
+        <div class="test-header">
+          <div class="test-progress" id="test-progress">Вопрос 1 из 5</div>
+          <div class="test-tries" id="test-tries">Попыток: 2</div>
+        </div>
+        <div class="task-block" style="min-height: 200px;">
+          <div class="task-question" id="test-q" style="font-size: 18px; margin-bottom: 20px;"></div>
+          <div class="input-row">
+            <input type="text" class="input-answer" id="test-in" placeholder="Введите ответ">
+            <button class="btn btn-primary" onclick="checkQuizAns()" id="test-btn-check">Ответить</button>
+          </div>
+          <div class="feedback" id="fb-test"></div>
+          <div id="test-next-wrap" style="display: none; margin-top: 20px;">
+            <button class="btn btn-primary" onclick="nextQuizQuestion()" style="width: 100%;">Следующий вопрос &rarr;</button>
+          </div>
+          <div class="solution-panel" id="sol-test"></div>
+        </div>
+      </div>
+      <div id="test-result-view" style="display: none;" class="test-result">
+        <h2>Зачёт завершен!</h2>
+        <p style="font-size: 20px; margin-bottom: 20px;">Ваш результат: <strong id="test-score" style="color: var(--success); font-size: 28px;"></strong> из 5</p>
+        <button class="btn btn-primary" onclick="startQuiz()">Пройти ещё раз</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  if (window.location.search.includes('mode=teacher')) {
+    document.body.classList.add('teacher-mode');
+  }
+
+  let score = 0, attempts = 0;
+  let selectedOpts = {};
+
+  function switchTab(index) {
+    document.querySelectorAll('.tab-btn').forEach((btn, i) => btn.classList.toggle('active', i === index));
+    document.querySelectorAll('.tab-content').forEach((el, i) => el.classList.toggle('active', i === index));
+    if (index === 3 && document.getElementById('trainer-q').innerText.includes('Загрузка')) nextTrainer();
+  }
+
+  function checkAns(id, correctStr) {
+    const input = document.getElementById('in-' + id);
+    const fb = document.getElementById('fb-' + id);
+    const userStr = input.value.trim().toLowerCase();
+    if (!userStr) return;
+    attempts++;
+    
+    const cleanUser = userStr.replace(/[\s,]/g, '');
+    const cleanCorrect = correctStr.toLowerCase().replace(/[\s,]/g, '');
+
+    if (cleanUser === cleanCorrect) {
+      score++;
+      fb.className = 'feedback show success';
+      fb.innerHTML = '✅ <strong>Верно!</strong>';
+    } else {
+      fb.className = 'feedback show error';
+      fb.innerHTML = '❌ <strong>Не совсем.</strong> Проверьте ответ.';
+    }
+    document.getElementById('score').textContent = score;
+    document.getElementById('attempts').textContent = attempts;
+  }
+
+  function selectOpt(qId, btn, val) {
+    if (document.body.classList.contains('teacher-mode')) return;
+    const parent = document.getElementById('q-' + qId);
+    parent.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedOpts[qId] = val;
+  }
+
+  function checkOpt(qId, correctVal) {
+    const userVal = selectedOpts[qId];
+    if (!userVal) return;
+    attempts++;
+    const fb = document.getElementById('fb-' + qId);
+    const parent = document.getElementById('q-' + qId);
+    parent.querySelectorAll('.option-btn').forEach(b => {
+      b.disabled = true;
+      if (b.textContent.trim().startsWith(correctVal + ')')) b.classList.add('correct');
+      else if (b.textContent.trim().startsWith(userVal + ')')) b.classList.add('incorrect');
+    });
+    if (userVal === correctVal) {
+      score++;
+      fb.className = 'feedback show success';
+      fb.innerHTML = '✅ <strong>Верно!</strong>';
+    } else {
+      fb.className = 'feedback show error';
+      fb.innerHTML = '❌ <strong>Не совсем.</strong>';
+    }
+    document.getElementById('score').textContent = score;
+    document.getElementById('attempts').textContent = attempts;
+  }
+
+  // === ТРЕНАЖЕР ===
+  const trainerTasks = [
+    { q: "Какие горы защищают Индию с севера?", a: "гималаи" },
+    { q: "Какая река считается священной в Индии?", a: "ганг" },
+    { q: "Какое животное в Индии считается священным?", a: "корова" },
+    { q: "Что изобрели в Индии: шахматы или бумагу?", a: "шахматы" },
+    { q: "Как называется игра, придуманная в Индии для царей?", a: "шахматы" },
+    { q: "Какое число изобрели в Индии?", a: "ноль" },
+    { q: "Какие непроходимые леса покрывают берега Ганга?", a: "джунгли" },
+    { q: "Какое животное индийцы приручили для работы?", a: "слон" }
+  ];
+
+  let currentTrainerTask = null;
+
+  function nextTrainer() {
+    currentTrainerTask = trainerTasks[Math.floor(Math.random() * trainerTasks.length)];
+    document.getElementById('trainer-q').innerText = currentTrainerTask.q;
+    document.getElementById('trainer-in').value = '';
+    document.getElementById('fb-trainer').className = 'feedback';
+  }
+
+  function checkTrainer() {
+    const input = document.getElementById('trainer-in');
+    const fb = document.getElementById('fb-trainer');
+    const userStr = input.value.trim().toLowerCase();
+    if (!userStr) return;
+    attempts++;
+    if (userStr === currentTrainerTask.a) {
+      score++;
+      fb.className = 'feedback show success';
+      fb.innerHTML = '✅ <strong>Верно!</strong>';
+    } else {
+      fb.className = 'feedback show error';
+      fb.innerHTML = '❌ <strong>Не совсем.</strong> Правильный ответ: ' + currentTrainerTask.a;
+    }
+    document.getElementById('score').textContent = score;
+    document.getElementById('attempts').textContent = attempts;
+  }
+
+  // === ЗАЧЁТ ===
+  const quizPool = [
+    { q: "Какие горы защищают Индию с севера? (Введите название)", a: "гималаи" },
+    { q: "Какие две главные реки Индии? (Введите через запятую)", a: "инд, ганг" },
+    { q: "Какое животное считается священным? (Введите название)", a: "корова" },
+    { q: "Что изобрели в Индии? (Введите: шахматы или ноль)", a: "шахматы" },
+    { q: "Как называются непроходимые леса в Индии?", a: "джунгли" },
+    { q: "Кто был высшей варной в Древней Индии? (Введите название)", a: "брахманы" },
+    { q: "Что выращивали индийцы? (Введите: рис или пшеницу)", a: "рис" },
+    { q: "Какое число изобрели в Индии?", a: "ноль" }
+  ];
+
+  let quizState = { qs: [], idx: 0, score: 0, tries: 0, currentQ: null };
+
+  function startQuiz() {
+    let shuffled = [...quizPool].sort(() => 0.5 - Math.random());
+    quizState.qs = shuffled.slice(0, 5);
+    quizState.idx = 0; quizState.score = 0;
+    document.getElementById('test-start-view').style.display = 'none';
+    document.getElementById('test-result-view').style.display = 'none';
+    document.getElementById('test-question-view').style.display = 'block';
+    loadQuizQuestion();
+  }
+
+  function loadQuizQuestion() {
+    quizState.tries = 0;
+    quizState.currentQ = quizState.qs[quizState.idx];
+    document.getElementById('test-progress').innerText = `Вопрос ${quizState.idx + 1} из 5`;
+    document.getElementById('test-tries').innerText = `Попыток: 2`;
+    document.getElementById('test-q').innerText = quizState.currentQ.q;
+    document.getElementById('test-in').value = '';
+    document.getElementById('test-in').disabled = false;
+    document.getElementById('fb-test').className = 'feedback';
+    document.getElementById('sol-test').classList.remove('show');
+    document.getElementById('test-next-wrap').style.display = 'none';
+    document.getElementById('test-btn-check').style.display = 'inline-block';
+    document.getElementById('test-btn-check').innerText = 'Ответить';
+  }
+
+  function checkQuizAns() {
+    const input = document.getElementById('test-in');
+    const fb = document.getElementById('fb-test');
+    const userStr = input.value.trim().toLowerCase();
+    if (!userStr) return;
+    quizState.tries++;
+    
+    if (document.body.classList.contains('teacher-mode')) {
+        fb.className = 'feedback show success';
+        fb.innerHTML = `Ответ: ${quizState.currentQ.a}`;
+        finishQuizQuestion();
+        return;
+    }
+    
+    const cleanUser = userStr.replace(/[\s,]/g, '');
+    const cleanCorrect = quizState.currentQ.a.toLowerCase().replace(/[\s,]/g, '');
+    
+    if (cleanUser === cleanCorrect) {
+      quizState.score++; score++;
+      fb.className = 'feedback show success';
+      fb.innerHTML = '✅ <strong>Верно!</strong>';
+      finishQuizQuestion();
+    } else {
+      if (quizState.tries >= 2) {
+        fb.className = 'feedback show error';
+        fb.innerHTML = '❌ <strong>Попытки закончились.</strong> Правильный ответ показан ниже.';
+        document.getElementById('sol-test').innerHTML = `<strong>Правильный ответ:</strong> ${quizState.currentQ.a}`;
+        document.getElementById('sol-test').classList.add('show');
+        finishQuizQuestion();
+      } else {
+        quizState.tries--;
+        fb.className = 'feedback show error';
+        fb.innerHTML = `❌ <strong>Не совсем.</strong> У вас осталась <strong>1 попытка</strong>.`;
+        document.getElementById('test-tries').innerText = `Попыток: 1`;
+        input.value = '';
+        quizState.tries++;
+      }
+    }
+    document.getElementById('score').textContent = score;
+    document.getElementById('attempts').textContent = quizState.idx + 1;
+  }
+
+  function finishQuizQuestion() {
+    document.getElementById('test-in').disabled = true;
+    document.getElementById('test-btn-check').style.display = 'none';
+    document.getElementById('test-next-wrap').style.display = 'block';
+    if (quizState.idx === 4) document.querySelector('#test-next-wrap .btn').innerText = 'Завершить зачёт';
+  }
+
+  function nextQuizQuestion() {
+    quizState.idx++;
+    if (quizState.idx >= 5) {
+      document.getElementById('test-question-view').style.display = 'none';
+      document.getElementById('test-result-view').style.display = 'block';
+      document.getElementById('test-score').innerText = `${quizState.score} / 5`;
+    } else {
+      loadQuizQuestion();
+    }
+  }
+</script>
+
+</body>
+</html>
