@@ -169,7 +169,8 @@
       </a>
 
       <!-- 7 класс -->
-      <div class="grade-title hardcore">7 класс (углубление)</div>
+      <!-- Убрали "(углубление)", оставили просто "7 класс" -->
+      <div class="grade-title hardcore">7 класс</div>
       <a href="lessons/algebra-19-10-uravneniya-drobi-7klass.html" class="lesson-card hardcore-card">
         <div class="lesson-info">
           <div class="lesson-date">19 октября · 12:45</div>
@@ -180,5 +181,34 @@
     </div>
 
   </div>
+
+  <!-- СКРИПТ ДЛЯ ПРОВЕРКИ ПАРОЛЯ -->
+  <script>
+    (function() {
+      const correctPassword = "rocket2026";
+      const storageKey = "group3_access_granted";
+      
+      // Проверяем, заходил ли уже пользователь
+      const isUnlocked = localStorage.getItem(storageKey);
+
+      if (isUnlocked !== "true") {
+        let pass = prompt("🔒 Введите пароль для доступа к материалам:");
+        
+        if (pass === correctPassword) {
+          // Запоминаем успешный вход
+          localStorage.setItem(storageKey, "true");
+        } else {
+          // Если пароль неверный или нажали отмену — блокируем контент
+          document.body.innerHTML = `
+            <div style="text-align: center; margin-top: 100px; font-family: 'Montserrat', sans-serif; padding: 20px;">
+              <h1 style="color: #E53935; font-size: 32px; margin-bottom: 15px;">Доступ запрещен</h1>
+              <p style="color: #6B7785; font-size: 18px;">Вы ввели неправильный пароль.</p>
+              <p style="color: #6B7785; font-size: 16px; margin-top: 10px;">Обновите страницу, чтобы попробовать снова.</p>
+            </div>
+          `;
+        }
+      }
+    })();
+  </script>
 </body>
 </html>
