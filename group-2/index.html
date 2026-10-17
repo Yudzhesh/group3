@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Уроки · Группа 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  body { font-family: 'Lora', serif; background: #F4F6F8; color: #2C3338; margin: 0; padding: 0; line-height: 1.6; }
+  .header { background: #1AA6C4; color: #fff; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; }
+  .brand { font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 700; }
+  .container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+  h1 { font-family: 'Montserrat', sans-serif; font-size: 28px; margin-bottom: 30px; color: #1A2024; }
+  .subject-section { margin-bottom: 40px; }
+  .subject-title { font-family: 'Montserrat', sans-serif; font-size: 18px; font-weight: 600; color: #1AA6C4; border-bottom: 2px solid #E4E8EB; padding-bottom: 10px; margin-bottom: 20px; }
+  .lesson-card { background: #fff; border-radius: 12px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); display: flex; justify-content: space-between; align-items: center; text-decoration: none; color: inherit; transition: transform 0.2s, box-shadow 0.2s; }
+  .lesson-card:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+  .lesson-info { flex: 1; }
+  .lesson-date { font-family: 'Montserrat', sans-serif; font-size: 13px; color: #6B7785; margin-bottom: 5px; }
+  .lesson-name { font-family: 'Montserrat', sans-serif; font-size: 17px; font-weight: 600; color: #1A2024; }
+  .btn-go { font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 600; color: #1AA6C4; background: #F0F7FA; padding: 8px 16px; border-radius: 20px; }
+</style>
+</head>
+<body>
+  <div class="header">
+    <div class="brand">Северное Сияние <span style="font-weight:400; opacity:0.8;">· Ученик</span></div>
+  </div>
+  <div class="container">
+    <h1>Материалы уроков · Группа 2</h1>
+    
+    <div class="subject-section">
+      <div class="subject-title">История</div>
+      <a href="lessons/2026-10-19-history-aleksandr-i.html" class="lesson-card">
+        <div class="lesson-info">
+          <div class="lesson-date">19 октября, понедельник</div>
+          <div class="lesson-name">Внутренняя политика Александра I в 1815–1825 гг.</div>
+        </div>
+        <div class="btn-go">Открыть</div>
+      </a>
+      <!-- Здесь будут добавляться другие уроки по истории -->
+    </div>
+
+    <!-- Пример для других предметов (пока пусто) -->
+    <div class="subject-section">
+      <div class="subject-title">Алгебра</div>
+      <div style="font-family: 'Montserrat'; font-size: 14px; color: #6B7785; font-style: italic;">Уроки появятся позже...</div>
+    </div>
+
+  </div>
+</body>
+</html>
