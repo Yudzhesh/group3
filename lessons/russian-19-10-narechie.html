@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Наречие · Северное Сияние</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #1AA6C4; --primary-dark: #158AA3; --bg-body: #F4F6F8; --bg-card: #FFFFFF;
+    --text-main: #2C3338; --text-muted: #6B7785; --border: #E4E8EB;
+    --theory-bg: #F0F7FA; --theory-border: #1AA6C4; --example-bg: #F4F9F0; --example-border: #7A9A6A;
+    --success: #4CAF50; --error: #E53935;
+    --teacher-pink: #FDF2F8; --teacher-pink-border: #D81B60; --solution-bg: #F8F9FA;
+    --hardcore: #8E24AA; --hardcore-bg: #F6F2FA;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  body { font-family: 'Lora', Georgia, serif; background: var(--bg-body); color: var(--text-main); line-height: 1.75; font-size: 17px; padding-bottom: 80px; }
+
+  .top-bar { background: var(--primary); color: #fff; padding: 16px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(26, 166, 196, 0.2); position: sticky; top: 0; z-index: 100; }
+  .brand { font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 700; }
+  .brand span { font-weight: 400; opacity: 0.8; }
+  .header-right { display: flex; align-items: center; gap: 20px; }
+  .back-link { font-family: 'Montserrat', sans-serif; font-size: 14px; color: #fff; text-decoration: none; font-weight: 500; opacity: 0.8; transition: opacity 0.2s; }
+  .back-link:hover { opacity: 1; }
+  .stats { display: flex; gap: 12px; font-family: 'Montserrat', sans-serif; font-size: 14px; }
+  .stat-item { background: rgba(255, 255, 255, 0.15); padding: 6px 14px; border-radius: 20px; }
+
+  .container { max-width: 900px; margin: 30px auto; background: var(--bg-card); border-radius: 16px; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05); overflow: hidden; }
+
+  .tabs-nav { display: flex; flex-wrap: wrap; justify-content: center; background: #F9FBFC; border-bottom: 1px solid var(--border); padding: 0 10px; }
+  .tab-btn { font-family: 'Montserrat', sans-serif; background: transparent; border: none; padding: 15px 12px; font-size: 14px; font-weight: 600; color: var(--text-muted); cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s; white-space: nowrap; }
+  .tab-btn:hover { color: var(--primary); }
+  .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+  .tab-btn.hardcore-tab { color: var(--hardcore); }
+  .tab-btn.hardcore-tab.active { color: var(--hardcore); border-bottom-color: var(--hardcore); background: var(--hardcore-bg); }
+
+  .lesson-content { padding: 30px; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* Подвкладки */
+  .sub-tabs { display: flex; gap: 10px; margin-bottom: 20px; background: #F4F6F8; padding: 5px; border-radius: 12px; border: 1px solid var(--border); }
+  .sub-tab-btn { flex: 1; padding: 10px; border: none; background: transparent; font-family: 'Montserrat'; font-weight: 600; font-size: 15px; color: #888; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+  .sub-tab-btn.active { background: var(--primary); color: #fff; box-shadow: 0 2px 10px rgba(26,166,196,0.3); }
+  .sub-tab-btn.active.hardcore { background: var(--hardcore); box-shadow: 0 2px 10px rgba(142,36,170,0.3); }
+  .sub-content { display: none; }
+  .sub-content.active { display: block; }
+
+  /* Блоки */
+  .theory { background: var(--theory-bg); border-left: 4px solid var(--theory-border); border-radius: 0 8px 8px 0; padding: 16px 20px; margin-bottom: 20px; font-size: 16px; }
+  .example { background: var(--example-bg); border-left: 4px solid var(--example-border); border-radius: 0 8px 8px 0; padding: 16px 20px; margin-bottom: 20px; }
+  .block-label { font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 1px; color: var(--text-muted); }
+  
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; background: #fff; font-size: 15px; }
+  th, td { border: 1px solid var(--border); padding: 10px 12px; text-align: left; vertical-align: top; }
+  th { background: #eef2f5; color: #2c4152; font-family: 'Montserrat', sans-serif; font-size: 14px; }
+
+  /* Задания */
+  .task-block { margin-bottom: 24px; background: #fff; padding: 24px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+  .task-question { font-family: 'Montserrat', sans-serif; font-size: 17px; font-weight: 600; margin-bottom: 16px; color: #1A2024; line-height: 1.5; }
+  .input-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .input-answer { font-family: 'Lora', serif; font-size: 16px; padding: 12px 18px; border: 2px solid var(--border); border-radius: 8px; outline: none; width: 100%; max-width: 350px; transition: border-color 0.2s; }
+  .input-answer:focus { border-color: var(--primary); }
+
+  .options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+  .option-btn { font-family: 'Lora', serif; font-size: 16px; text-align: left; padding: 12px 18px; background: #fff; border: 2px solid var(--border); border-radius: 8px; cursor: pointer; transition: all 0.2s; color: var(--text-main); }
+  .option-btn:hover { border-color: var(--primary); background: #F9FBFC; }
+  .option-btn.selected { border-color: var(--primary); background: var(--theory-bg); }
+  .option-btn.correct { border-color: var(--success); background: #EBF7EB; }
+  .option-btn.incorrect { border-color: var(--error); background: #FDEDED; }
+  .option-btn:disabled { cursor: default; }
+
+  .btn { font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 600; padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+  .btn-primary { background: var(--primary); color: #fff; }
+  .btn-primary:hover { background: var(--primary-dark); }
+  .btn-hardcore { background: var(--hardcore); color: #fff; }
+  .btn-hardcore:hover { background: #7B1FA2; }
+  .btn-solution { background: #fff; color: var(--text-muted); border: 2px solid var(--border); }
+  .btn-solution:hover { background: #F4F6F8; color: var(--text-main); border-color: #B3BAC1; }
+
+  .feedback { margin-top: 16px; padding: 12px 16px; border-radius: 8px; font-family: 'Montserrat', sans-serif; font-size: 15px; display: none; }
+  .feedback.show { display: block; }
+  .feedback.success { background: #EBF7EB; color: #2E7D32; border-left: 4px solid var(--success); }
+  .feedback.error { background: #FDEDED; color: #C62828; border-left: 4px solid var(--error); }
+
+  .solution-panel { display: none; margin-top: 16px; padding: 16px 20px; background: var(--solution-bg); border: 1px dashed #B3BAC1; border-radius: 8px; font-size: 15px; line-height: 1.6; }
+  .solution-panel.show { display: block; }
+  
+  .answer { display: none; background: var(--teacher-pink); border-left: 5px solid var(--teacher-pink-border); padding: 12px 16px; border-radius: 0 8px 8px 0; margin-top: 16px; font-size: 15px; color: #880E4F; }
+  body.teacher-mode .answer { display: block; }
+
+  /* Диктант (только для учителя) */
+  .teacher-only-block { display: none; background: #FFF8E1; border: 2px dashed #FFB300; border-radius: 12px; padding: 24px; margin-top: 20px; }
+  body.teacher-mode .teacher-only-block { display: block; }
+  .student-only-block { display: block; }
+  body.teacher-mode .student-only-block { display: none; }
+  
+  .dictation-text { font-style: italic; line-height: 2; font-size: 17px; margin-bottom: 15px; }
+
+  /* Тренажер */
+  .trainer-box { background: var(--hardcore-bg); border: 2px solid var(--hardcore); border-radius: 16px; padding: 24px; margin-top: 20px; }
+  .trainer-question { font-size: 18px; margin-bottom: 20px; font-weight: 600; }
+
+  /* Зачет */
+  .test-header { display: flex; justify-content: space-between; align-items: center; background: var(--theory-bg); padding: 15px 20px; border-radius: 12px; margin-bottom: 20px; }
+  .test-progress { font-family: 'Montserrat', sans-serif; font-size: 15px; font-weight: 600; color: var(--primary); }
+  .test-tries { font-family: 'Montserrat', sans-serif; font-size: 14px; color: var(--text-muted); }
+  .test-result { text-align: center; padding: 40px 20px; }
+  .test-result h2 { font-family: 'Montserrat', sans-serif; font-size: 24px; color: var(--primary); margin-bottom: 15px; }
+
+  /* Самостоятельная работа */
+  .homework-box { background: #E3F2FD; border: 2px solid #1E88E5; border-radius: 16px; padding: 24px; margin-top: 20px; }
+  .homework-box h3 { font-family: 'Montserrat', sans-serif; color: #1565C0; margin-bottom: 15px; font-size: 18px; }
+  .homework-box ul { margin-bottom: 20px; padding-left: 20px; }
+  .homework-box li { margin-bottom: 10px; }
+  .vznanie-phrase { background: #FFF; padding: 15px; border-radius: 8px; border-left: 4px solid #D81B60; font-weight: 600; color: #880E4F; }
+
+  @media (max-width: 768px) { 
+    .container { margin: 0; border-radius: 0; } .lesson-content { padding: 15px; }
+    .top-bar { padding: 15px 20px; flex-direction: column; gap: 10px; align-items: flex-start; } 
+    .stats { flex-wrap: wrap; }
+    .input-row { flex-direction: column; align-items: stretch; }
+    .btn { width: 100%; }
+    table { font-size: 13px; }
+    .sub-tabs { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top-bar">
+  <div class="brand">Северное Сияние <span>· Русский язык</span></div>
+  <div class="header-right">
+    <a href="../index.html" class="back-link">&larr; К списку уроков</a>
+    <div class="stats">
+      <div class="stat-item">✅ Верно: <strong id="score">0</strong></div>
+      <div class="stat-item">📝 Попыток: <strong id="attempts">0</strong></div>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <div class="tabs-nav" id="tabs-nav">
+    <button class="tab-btn active" onclick="switchTab(0)">1. Что такое наречие?</button>
+    <button class="tab-btn" onclick="switchTab(1)">2. Разряды</button>
+    <button class="tab-btn" onclick="switchTab(2)">3. Правописание</button>
+    <button class="tab-btn hardcore-tab" onclick="switchTab(3)">Тренажер ⚡</button>
+    <button class="tab-btn" onclick="switchTab(4)">Диктанты 📝</button>
+    <button class="tab-btn" onclick="switchTab(5)">Самостоятельная 🏠</button>
+    <button class="tab-btn" onclick="switchTab(6)" style="color:#D84315;">Зачёты 🏆</button>
+  </div>
+
+  <div class="lesson-content">
+    
+    <!-- ВКЛАДКА 1: ЧТО ТАКОЕ НАРЕЧИЕ -->
+    <div class="tab-content active" id="tab-0">
+      <div class="theory">
+        <div class="block-label">Теория</div>
+        <strong>Наречие</strong> — самостоятельная часть речи, которая обозначает <strong>признак действия</strong> (как? каким образом?), <strong>признак другого признака</strong> (в какой степени?) или <strong>признак предмета</strong> (где? куда?).
+        <br><br>
+        <strong>Главные признаки:</strong>
+        <ul>
+          <li><strong>Не изменяется</strong> (не склоняется, не спрягается).</li>
+          <li>В предложении чаще всего является <strong>обстоятельством</strong>.</li>
+          <li>Отвечает на вопросы: <em>как? где? куда? когда? зачем? почему? в какой степени?</em></li>
+        </ul>
+      </div>
+      <div class="example">
+        <div class="block-label">Пример</div>
+        <em>Он <strong>быстро</strong> бежал.</em> (Признак действия, вопрос «как?»).<br>
+        <em>Очень <strong>красиво</strong> написал.</em> (Признак другого признака, вопрос «в какой степени?»).<br>
+        <em>Дом <strong>напротив</strong>.</em> (Признак предмета, вопрос «где?»).
+      </div>
+
+      <div class="task-block">
+        <div class="task-question">Задача 1. Найдите наречие в предложении: <em>«Справа от дороги шумел густой лес»</em>. (Введите слово)</div>
+        <div class="input-row">
+          <input type="text" class="input-answer" id="in-0-0" placeholder="Наречие">
+          <button class="btn btn-primary" onclick="checkAns('0-0', 'справа')">Проверить</button>
+        </div>
+        <div class="feedback" id="fb-0-0"></div>
+        <div class="answer"><strong>Ответ:</strong> справа.</div>
+      </div>
+
+      <div class="task-block">
+        <div class="task-question">Задача 2. В каком предложении выделенное слово является наречием?</div>
+        <div class="options" id="q-0-1">
+          <button class="option-btn" onclick="selectOpt('0-1', this, 'A')">А) <strong>Тепло</strong> в комнате.</button>
+          <button class="option-btn" onclick="selectOpt('0-1', this, 'B')">Б) Он <strong>тепло</strong> улыбнулся.</button>
+          <button class="option-btn" onclick="selectOpt('0-1', this, 'C')">В) Утро было <strong>тепло</strong>.</button>
+        </div>
+        <button class="btn btn-primary" onclick="checkOpt('0-1', 'B')">Проверить</button>
+        <div class="feedback" id="fb-0-1"></div>
+        <div class="answer"><strong>Ответ:</strong> Б. (Относится к глаголу «улыбнулся», вопрос «как?»).</div>
+      </div>
+    </div>
+
+    <!-- ВКЛАДКА 2: РАЗРЯДЫ -->
+    <div class="tab-content" id="tab-1">
+      <div class="theory">
+        <div class="block-label">Теория: Разряды наречий по значению</div>
+        <table>
+          <tr><th>Разряд</th><th>Вопросы</th><th>Примеры</th></tr>
+          <tr><td><strong>Образа действия</strong></td><td>как? каким образом?</td><td>быстро, громко, шёпотом</td></tr>
+          <tr><td><strong>Меры и степени</strong></td><td>в какой степени? сколько?</td><td>очень, слишком, чуть-чуть</td></tr>
+          <tr><td><strong>Места</strong></td><td>где? куда? откуда?</td><td>вдали, вверх, издалека</td></tr>
+          <tr><td><strong>Времени</strong></td><td>когда? как долго?</td><td>вчера, утром, долго</td></tr>
+          <tr><td><strong>Причины</strong></td><td>почему? отчего?</td><td>сгоряча, сослепу</td></tr>
+          <tr><td><strong>Цели</strong></td><td>зачем? с какой целью?</td><td>нарочно, назло</td></tr>
+        </table>
+      </div>
+      <div class="example">
+        <div class="block-label">Пример</div>
+        <em>Он <strong>нарочно</strong> опоздал.</em> (Цель).<br>
+        <em>Мы <strong>издалека</strong> приехали.</em> (Место).<br>
+        <em>Она <strong>очень</strong> устала.</em> (Мера и степень).
+      </div>
+
+      <div class="task-block">
+        <div class="task-question">Задача 1. Определите разряд наречия <strong>«сгоряча»</strong>.</div>
+        <div class="options" id="q-1-0">
+          <button class="option-btn" onclick="selectOpt('1-0', this, 'A')">А) Образа действия</button>
+          <button class="option-btn" onclick="selectOpt('1-0', this, 'B')">Б) Причины</button>
+          <button class="option-btn" onclick="selectOpt('1-0', this, 'C')">В) Цели</button>
+          <button class="option-btn" onclick="selectOpt('1-0', this, 'D')">Г) Времени</button>
+        </div>
+        <button class="btn btn-primary" onclick="checkOpt('1-0', 'B')">Проверить</button>
+        <div class="feedback" id="fb-1-0"></div>
+        <div class="answer"><strong>Ответ:</strong> Б. (Причина — «почему?»).</div>
+      </div>
+    </div>
+
+    <!-- ВКЛАДКА 3: ПРАВОПИСАНИЕ -->
+    <div class="tab-content" id="tab-2">
+      <div class="theory">
+        <div class="block-label">Теория: Правописание наречий</div>
+        <p><strong>Слитно:</strong> наречия, образованные от наречий (быстро-быстро → быстро), от существительных с предлогом (в + бок → вбок).</p>
+        <p><strong>Раздельно:</strong> наречия с предлогом, если между ними можно вставить слово (на + лету → на полном лету).</p>
+        <p><strong>Через дефис:</strong> с приставкой <em>по-</em> и суффиксами <em>-ому, -ему, -ски</em> (по-дружески); с приставкой <em>в-</em> и суффиксом <em>-ых/-их</em> (во-первых).</p>
+      </div>
+      <div class="example">
+        <div class="block-label">Пример</div>
+        <em>Сделал <strong>наскоро</strong>.</em> (Слитно).<br>
+        <em>Сделал <strong>на совесть</strong>.</em> (Раздельно).<br>
+        <em>Сделал <strong>по-своему</strong>.</em> (Через дефис).
+      </div>
+
+      <div class="task-block">
+        <div class="task-question">Задача 1. Как пишется наречие: <strong>(по)дружески</strong>?</div>
+        <div class="options" id="q-2-0">
+          <button class="option-btn" onclick="selectOpt('2-0', this, 'A')">А) Слитно</button>
+          <button class="option-btn" onclick="selectOpt('2-0', this, 'B')">Б) Раздельно</button>
+          <button class="option-btn" onclick="selectOpt('2-0', this, 'C')">В) Через дефис</button>
+        </div>
+        <button class="btn btn-primary" onclick="checkOpt('2-0', 'C')">Проверить</button>
+        <div class="feedback" id="fb-2-0"></div>
+        <div class="answer"><strong>Ответ:</strong> В. (Приставка по- + суффикс -ски).</div>
+      </div>
+    </div>
+
+    <!-- ВКЛАДКА 4: ТРЕНАЖЕР -->
+    <div class="tab-content" id="tab-3">
+      <div class="trainer-box">
+        <h3 style="font-family: 'Montserrat'; color: var(--hardcore); margin-bottom: 15px;">⚡ Бесконечный тренажер по наречиям</h3>
+        <p style="margin-bottom: 20px;">Здесь задания генерируются случайно. Ограничений нет!</p>
+        
+        <div class="task-block" style="border-color: var(--hardcore);">
+          <div class="trainer-question" id="trainer-q">Загрузка...</div>
+          <div class="input-row">
+            <input type="text" class="input-answer" id="trainer-in" placeholder="Введите ответ">
+            <button class="btn btn-hardcore" onclick="checkTrainer()">Проверить</button>
+            <button class="btn btn-next" style="background:#fff; color:var(--hardcore); border:2px solid var(--hardcore);" onclick="nextTrainer()">Другая &rarr;</button>
+          </div>
+          <div class="feedback" id="fb-trainer"></div>
+          <div class="solution-panel" id="sol-trainer"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ВКЛАДКА 5: ДИКТАНТЫ -->
+    <div class="tab-content" id="tab-4">
+      
+      <div class="student-only-block">
+        <div class="theory" style="background: #FFF8E1; border-color: #FFB300;">
+          <div class="block-label" style="color: #F57F17;">Инструкция для ученика</div>
+          <p style="font-size: 18px; margin-bottom: 15px;">Вам нужно написать два диктанта в рабочую тетрадь.</p>
+          <p>1. <strong>Словарный диктант:</strong> Наставник продиктует 10 наречий. Запишите их в тетрадь, выделите приставки и суффиксы.</p>
+          <p>2. <strong>Текстовый диктант:</strong> Наставник продиктует текст (ВПР, 7 класс). Запишите его, вставляя пропущенные буквы и знаки препинания. Подчеркните все наречия как члены предложения.</p>
+        </div>
+      </div>
+
+      <div class="teacher-only-block">
+        <h3 style="color: #F57F17; margin-bottom: 15px; font-family: 'Montserrat';">Тексты для диктовки (только для наставника)</h3>
+        
+        <p style="font-weight: bold; margin-bottom: 5px;">Словарный диктант (10 слов):</p>
+        <p class="dictation-text">Наскоро, по-дружески, во-первых, вдали, настежь, замертво, досуха, изредка, нарочно, сослепу.</p>
+        
+        <p style="font-weight: bold; margin-bottom: 5px; margin-top: 20px;">Текстовый диктант (ВПР, 7 класс):</p>
+        <p class="dictation-text">
+          Коротка августовская ночь в Заполярье. Пока Васютка управился с дровами, темень поредела, спрятавшись вглубь леса. Не успела она ещё совсем рассеяться, а на смену ей уже выполз туман. Стало свежо. Костёр от сырости зашипел, защёлкал, принялся чихать, будто сердился на пелену, окутавшую всё вокруг. Комары, надоедавшие всю ночь, куда-то исчезли. Ни дуновения, ни шороха. Убаюканная тайга дремала и чутко ждала первого звука. Что это будет за звук — неизвестно. Может быть, раздастся робкий свист пичужки или лёгкий шум ветра в вершинах бородатых елей. Может быть, весело застучит по дереву трудолюбивый дятел. Кто-то должен разбудить сонную тайгу. Васютка поёжился, придвинулся к костру и крепко заснул, не дождавшись утренней весточки.
+        </p>
+        
+        <div style="background: #E8F5E9; border-left: 4px solid #4CAF50; padding: 12px; margin-top: 15px; color: #2E7D32;">
+          <strong>Ключи к тексту:</strong> Наречия: коротка (краткое прил., не наречие), вглубь, совсем, свежо (категория состояния), вокруг, куда-то, чутко, неизвестно, весело, крепко. Слова категории состояния: свежо, неизвестно.
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ВКЛАДКА 6: САМОСТОЯТЕЛЬНАЯ РАБОТА -->
+    <div class="tab-content" id="tab-5">
+      <div class="homework-box">
+        <h3>Домашняя самостоятельная работа</h3>
+        <p style="margin-bottom: 15px;">Выполните следующие задания письменно в тетради:</p>
+        
+        <ul>
+          <li><strong>Задание 1.</strong> Выпишите из текстового диктанта все наречия и укажите их разряд.</li>
+          <li><strong>Задание 2.</strong> Составьте три предложения с наречиями, которые пишутся слитно, раздельно и через дефис.</li>
+          <li><strong>Задание 3 (дополнительно).</strong> Сделайте морфологический разбор одного наречия из текста.</li>
+        </ul>
+
+        <div class="vznanie-phrase">
+          Сфотографируйте классную работу в тетради по русскому языку (диктанты и самостоятельную работу) и загрузите фото на платформу Взнание вместе с выполнением самостоятельной работы.
+        </div>
+      </div>
+    </div>
+
+    <!-- ВКЛАДКА 7: ЗАЧЁТЫ -->
+    <div class="tab-content" id="tab-6">
+      
+      <div class="sub-tabs">
+        <button class="sub-tab-btn active" onclick="switchSubTab(6, 0)">Зачёт (6 класс)</button>
+        <button class="sub-tab-btn" onclick="switchSubTab(6, 1)" style="color: var(--hardcore);">Зачёт (7 класс) ⭐</button>
+      </div>
+
+      <!-- ЗАЧЁТ 6 КЛАСС -->
+      <div class="sub-content active" id="sub-tab-6-0">
+        <div id="test6-start-view" style="text-align: center; padding: 40px 20px;">
+          <h2 style="font-family:'Montserrat'; color:var(--primary); margin-bottom:15px;">Зачёт (6 класс)</h2>
+          <p style="margin-bottom:20px; color:#666;">Базовые задания по теме. 5 вопросов, 2 попытки.</p>
+          <button class="btn btn-primary" onclick="startQuiz(6)" style="font-size: 18px; padding: 15px 40px;">Начать зачёт</button>
+        </div>
+        <div id="test6-question-view" style="display: none;">
+          <div class="test-header">
+            <div class="test-progress" id="test6-progress">Вопрос 1 из 5</div>
+            <div class="test-tries" id="test6-tries">Попыток: 2</div>
+          </div>
+          <div class="task-block" style="min-height: 200px;">
+            <div class="task-question" id="test6-q" style="font-size: 18px; margin-bottom: 20px;"></div>
+            <div class="input-row">
+              <input type="text" class="input-answer" id="test6-in" placeholder="Введите ответ">
+              <button class="btn btn-primary" onclick="checkQuizAns(6)" id="test6-btn-check">Ответить</button>
+            </div>
+            <div class="feedback" id="fb-test6"></div>
+            <div id="test6-next-wrap" style="display: none; margin-top: 20px;">
+              <button class="btn btn-primary" onclick="nextQuizQuestion(6)" style="width: 100%;">Следующий вопрос &rarr;</button>
+            </div>
+            <div class="solution-panel" id="sol-test6"></div>
+          </div>
+        </div>
+        <div id="test6-result-view" style="display: none;" class="test-result">
+          <h2>Зачёт завершен!</h2>
+          <p style="font-size: 20px; margin-bottom: 20px;">Ваш результат: <strong id="test6-score" style="color: var(--success); font-size: 28px;"></strong> из 5</p>
+          <button class="btn btn-primary" onclick="startQuiz(6)">Пройти ещё раз</button>
+        </div>
+      </div>
+
+      <!-- ЗАЧЁТ 7 КЛАСС -->
+      <div class="sub-content" id="sub-tab-6-1">
+        <div id="test7-start-view" style="text-align: center; padding: 40px 20px;">
+          <h2 style="font-family:'Montserrat'; color:var(--hardcore); margin-bottom:15px;">Зачёт (7 класс)</h2>
+          <p style="margin-bottom:20px; color:#666;">Повышенная сложность: степени сравнения, омонимия. 5 вопросов, 2 попытки.</p>
+          <button class="btn btn-hardcore" onclick="startQuiz(7)" style="font-size: 18px; padding: 15px 40px;">Начать зачёт</button>
+        </div>
+        <div id="test7-question-view" style="display: none;">
+          <div class="test-header" style="background: var(--hardcore-bg);">
+            <div class="test-progress" id="test7-progress" style="color: var(--hardcore);">Вопрос 1 из 5</div>
+            <div class="test-tries" id="test7-tries">Попыток: 2</div>
+          </div>
+          <div class="task-block" style="min-height: 200px; border-color: #E1BEE7;">
+            <div class="task-question" id="test7-q" style="font-size: 18px; margin-bottom: 20px;"></div>
+            <div class="input-row">
+              <input type="text" class="input-answer" id="test7-in" placeholder="Введите ответ">
+              <button class="btn btn-hardcore" onclick="checkQuizAns(7)" id="test7-btn-check">Ответить</button>
+            </div>
+            <div class="feedback" id="fb-test7"></div>
+            <div id="test7-next-wrap" style="display: none; margin-top: 20px;">
+              <button class="btn btn-hardcore" onclick="nextQuizQuestion(7)" style="width: 100%;">Следующий вопрос &rarr;</button>
+            </div>
+            <div class="solution-panel" id="sol-test7"></div>
+          </div>
+        </div>
+        <div id="test7-result-view" style="display: none;" class="test-result">
+          <h2 style="color: var(--hardcore);">Зачёт завершен!</h2>
+          <p style="font-size: 20px; margin-bottom: 20px;">Ваш результат: <strong id="test7-score" style="color: var(--hardcore); font-size: 28px;"></strong> из 5</p>
+          <button class="btn btn-hardcore" onclick="startQuiz(7)">Пройти ещё раз</button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<script>
+  if (window.location.search.includes('mode=teacher')) document.body.classList.add('teacher-mode');
+
+  let score = 0, attempts = 0;
+  let selectedOpts = {};
+
+  function switchTab(index) {
+    document.querySelectorAll('.tab-btn').forEach((btn, i) => btn.classList.toggle('active', i === index));
+    document.querySelectorAll('.tab-content').forEach((el, i) => el.classList.toggle('active', i === index));
+    if (index === 3 && document.getElementById('trainer-q').innerText.includes('Загрузка')) nextTrainer();
+  }
+
+  function switchSubTab(tabIndex, subIndex) {
+    const tab = document.getElementById('tab-' + tabIndex);
+    const btns = tab.querySelectorAll('.sub-tab-btn');
+    const contents = tab.querySelectorAll('.sub-content');
+    btns.forEach((btn, i) => btn.classList.toggle('active', i === subIndex));
+    contents.forEach((el, i) => el.classList.toggle('active', i === subIndex));
+  }
+
+  // Проверка текстовых ответов
+  function checkAns(id, correctStr) {
+    const input = document.getElementById('in-' + id);
+    const fb = document.getElementById('fb-' + id);
+    const userStr = input.value.trim().toLowerCase().replace(/\s+/g, '');
+    
+    if (!userStr) return;
+    attempts++;
+
+    const normalizedUser = userStr.replace(/[^а-я0-9]/g, '');
+    const normalizedCorrect = correctStr.toLowerCase().replace(/\s+/g, '').replace(/[^а-я0-9]/g, '');
+
+    if (normalizedUser === normalizedCorrect) {
+      score++;
+      fb.className = 'feedback show success';
+      fb.innerHTML = '✅ <strong>Верно!</strong>';
+    } else {
+      fb.className = 'feedback show error';
+      fb.innerHTML = '❌ <strong>Не совсем.</strong> Проверьте ответ.';
+    }
+
+    document.getElementById('score').textContent = score;
+    document.getElementById('attempts').textContent = attempts;
+  }
+
+  function toggleSol(id) {
+    document.getElementById('sol-' + id).classList.toggle('show');
+  }
+
+  // Проверка выбора варианта
+  function selectOpt(qId, btn, val) {
+    if (document.body.classList.contains('teacher-mode')) return;
+    const parent = document.getElementById('q-' + qId);
+    parent.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedOpts[qId] = val;
+  }
+
+  function checkOpt(qId, correctVal) {
+    const userVal = selectedOpts[qId];
+    if (!userVal) return;
+
+    attempts++;
+    const fb = document.getElementById('fb-' + qId);
+    const parent = document.getElementById('q-' + qId);
+    
+    parent.querySelectorAll('.option-btn').forEach(b => {
+      b.disabled = true;
+      if (b.textContent.trim().startsWith(correctVal + ')')) b.classList.add('correct');
+      else if (b.textContent.trim().startsWith(userVal + ')')) b.classList.add('incorrect');
+    });
+
+    if (userVal === correctVal) {
+      score++;
+      fb.className = 'feedback show success';
+      fb.innerHTML = '✅ <strong>Верно!</strong>';
+    } else {
+      fb.className = 'feedback show error';
+      fb.innerHTML = '❌ <strong>Не совсем.</strong>';
+    }
+
+    document.getElementById('score').textContent = score;
+    document.getElementById('attempts').textContent = attempts;
+  }
+
+  // === ТРЕНАЖЕР ===
+  const trainerTasks = [
+    { q: "Как пишется наречие: (на)скоро?", a: "слитно", opts: ["слитно", "раздельно", "через дефис"] },
+    { q: "Как пишется наречие: (по)дружески?", a: "через дефис", opts: ["слитно", "раздельно", "через дефис"] },
+    { q: "Определите разряд наречия «вчера».", a: "времени", opts: ["образа действия", "времени", "места"] },
+    { q: "Определите разряд наречия «громко».", a: "образа действия", opts: ["образа действия", "меры и степени", "цели"] },
+    { q: "Как пишется наречие: (в)трое?", a: "слитно", opts: ["слитно", "раздельно", "через дефис"] },
+    { q: "Определите разряд наречия «нарочно».", a: "цели", opts: ["причины", "цели", "времени"] },
+    { q: "Как пишется наречие: (на)лету?", a: "раздельно", opts: ["слитно", "раздельно", "через дефис"] },
+    { q: "Определите разряд наречия «очень».", a: "меры и степени", opts: ["образа действия", "меры и степени", "места"] }
+  ];
+
+  let currentTrainerTask = null;
+
+  function nextTrainer() {
+    currentTrainerTask = trainerTasks[Math.floor(Math.random() * trainerTasks.length)];
+    document.getElementById('trainer-q').innerText = currentTrainerTask.q;
+    document.getElementById('trainer-in').value = '';
+    document.getElementById('fb-trainer').className = 'feedback';
+    document.getElementById('sol-trainer').classList.remove('show');
+  }
+
+  function checkTrainer() {
+    const input = document.getElementById('trainer-in');
+    const fb = document.getElementById('fb-trainer');
+    const userStr = input.value.trim().toLowerCase();
+    if (!userStr) return;
+
+    attempts++;
+    if (userStr === currentTrainerTask.a) {
+      score++;
+      fb.className = 'feedback show success';
+      fb.innerHTML = '✅ <strong>Верно!</strong>';
+    } else {
+      fb.className = 'feedback show error';
+      fb.innerHTML = '❌ <strong>Не совсем.</strong> Правильный ответ: ' + currentTrainerTask.a;
+    }
+    document.getElementById('score').textContent = score;
+    document.getElementById('attempts').textContent = attempts;
+  }
+
+  // === ЗАЧЁТЫ ===
+  const quizPools = {
+    6: [
+      { q: "Что такое наречие? (Введите номер)\n1) Часть речи, обозначающая признак действия.\n2) Часть речи, обозначающая предмет.\n3) Часть речи, обозначающая количество.", a: "1" },
+      { q: "Найдите наречие в предложении: «Он громко засмеялся». (Введите слово)", a: "громко" },
+      { q: "Как пишется наречие: (по)дружески? (Введите: слитно, раздельно или через дефис)", a: "через дефис" },
+      { q: "Определите разряд наречия «вчера». (Введите ответ)", a: "времени" },
+      { q: "В каком предложении выделенное слово — наречие? (Введите номер)\n1) Мне холодно.\n2) Он холодно посмотрел.\n3) Утро холодно.", a: "2" }
+    ],
+    7: [
+      { q: "Определите степень сравнения наречия «быстрее». (Введите ответ)", a: "сравнительная" },
+      { q: "В каком предложении выделенное слово — наречие? (Введите номер)\n1) Он быстро бежал.\n2) Его лицо было быстро.\n3) Бег был быстр.", a: "1" },
+      { q: "Как пишется наречие: (во)первых? (Введите: слитно, раздельно или через дефис)", a: "через дефис" },
+      { q: "Определите разряд наречия «сгоряча». (Введите ответ)", a: "причины" },
+      { q: "Выпишите грамматическую основу предложения: «Мне было весело». (Введите два слова через пробел)", a: "было весело" }
+    ]
+  };
+
+  let quizStates = {
+    6: { qs: [], idx: 0, score: 0, tries: 0, currentQ: null },
+    7: { qs: [], idx: 0, score: 0, tries: 0, currentQ: null }
+  };
+
+  function startQuiz(grade) {
+    let pool = quizPools[grade];
+    let shuffled = [...pool].sort(() => 0.5 - Math.random());
+    let state = quizStates[grade];
+    
+    state.qs = shuffled.slice(0, 5);
+    state.idx = 0; state.score = 0;
+    
+    document.getElementById(`test${grade}-start-view`).style.display = 'none';
+    document.getElementById(`test${grade}-result-view`).style.display = 'none';
+    document.getElementById(`test${grade}-question-view`).style.display = 'block';
+    loadQuizQuestion(grade);
+  }
+
+  function loadQuizQuestion(grade) {
+    let state = quizStates[grade];
+    state.tries = 0;
+    state.currentQ = state.qs[state.idx];
+    
+    document.getElementById(`test${grade}-progress`).innerText = `Вопрос ${state.idx + 1} из 5`;
+    document.getElementById(`test${grade}-tries`).innerText = `Попыток: 2`;
+    document.getElementById(`test${grade}-q`).innerText = state.currentQ.q;
+    document.getElementById(`test${grade}-in`).value = '';
+    document.getElementById(`test${grade}-in`).disabled = false;
+    document.getElementById(`fb-test${grade}`).className = 'feedback';
+    document.getElementById(`sol-test${grade}`).classList.remove('show');
+    document.getElementById(`test${grade}-next-wrap`).style.display = 'none';
+    document.getElementById(`test${grade}-btn-check`).style.display = 'inline-block';
+    document.getElementById(`test${grade}-btn-check`).innerText = 'Ответить';
+  }
+
+  function checkQuizAns(grade) {
+    let state = quizStates[grade];
+    const input = document.getElementById(`test${grade}-in`);
+    const fb = document.getElementById(`fb-test${grade}`);
+    const userStr = input.value.trim().toLowerCase();
+    
+    if (!userStr) return;
+    state.tries++;
+    
+    if (document.body.classList.contains('teacher-mode')) {
+        fb.className = 'feedback show success';
+        fb.innerHTML = `Ответ: ${state.currentQ.a}`;
+        finishQuizQuestion(grade);
+        return;
+    }
+
+    let isCorrect = false;
+    if (userStr.replace(/[^а-я0-9]/g, '') === state.currentQ.a.toLowerCase().replace(/[^а-я0-9]/g, '')) {
+        isCorrect = true;
+    }
+
+    if (isCorrect) {
+      state.score++; score++;
+      fb.className = 'feedback show success';
+      fb.innerHTML = '✅ <strong>Верно!</strong>';
+      finishQuizQuestion(grade);
+    } else {
+      if (state.tries >= 2) {
+        fb.className = 'feedback show error';
+        fb.innerHTML = '❌ <strong>Попытки закончились.</strong> Правильный ответ показан ниже.';
+        document.getElementById(`sol-test${grade}`).innerHTML = `<strong>Правильный ответ:</strong> ${state.currentQ.a}`;
+        document.getElementById(`sol-test${grade}`).classList.add('show');
+        finishQuizQuestion(grade);
+      } else {
+        state.tries--;
+        fb.className = 'feedback show error';
+        fb.innerHTML = `❌ <strong>Не совсем.</strong> У вас осталась <strong>1 попытка</strong>.`;
+        document.getElementById(`test${grade}-tries`).innerText = `Попыток: 1`;
+        input.value = '';
+        state.tries++;
+      }
+    }
+    document.getElementById('score').textContent = score;
+    document.getElementById('attempts').textContent = state.idx + 1;
+  }
+
+  function finishQuizQuestion(grade) {
+    document.getElementById(`test${grade}-in`).disabled = true;
+    document.getElementById(`test${grade}-btn-check`).style.display = 'none';
+    document.getElementById(`test${grade}-next-wrap`).style.display = 'block';
+    if (quizStates[grade].idx === 4) document.querySelector(`#test${grade}-next-wrap .btn`).innerText = 'Завершить зачёт';
+  }
+
+  function nextQuizQuestion(grade) {
+    let state = quizStates[grade];
+    state.idx++;
+    if (state.idx >= 5) {
+      document.getElementById(`test${grade}-question-view`).style.display = 'none';
+      document.getElementById(`test${grade}-result-view`).style.display = 'block';
+      document.getElementById(`test${grade}-score`).innerText = `${state.score} / 5`;
+    } else {
+      loadQuizQuestion(grade);
+    }
+  }
+</script>
+
+</body>
+</html>
