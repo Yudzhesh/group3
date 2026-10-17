@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Задачник: дроби · Северное Сияние</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #1AA6C4; --primary-dark: #158AA3; --bg-body: #F4F6F8; --bg-card: #FFFFFF;
+    --text-main: #2C3338; --text-muted: #6B7785; --border: #E4E8EB;
+    --theory-bg: #F0F7FA; --theory-border: #1AA6C4; --example-bg: #F4F9F0; --example-border: #7A9A6A;
+    --gold-bg: #FFF9E6; --gold-border: #F5B301; --success: #4CAF50; --error: #E53935;
+    --teacher-pink: #FDF2F8; --teacher-pink-border: #D81B60; --solution-bg: #F8F9FA;
+    --level-1: #2196F3; --level-2: #8E24AA; --level-3: #F5B301;
+    --hardcore: #FF5722; --hardcore-bg: #FBE9E7;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  body { font-family: 'Lora', Georgia, serif; background: var(--bg-body); color: var(--text-main); line-height: 1.75; font-size: 17px; padding-bottom: 120px; overflow-x: hidden; }
+
+  /* === КОТИК === */
+  .cat-container {
+    position: fixed;
+    bottom: 10px;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    pointer-events: none;
+    z-index: 50;
+    overflow: hidden;
+  }
+  .walking-cat {
+    font-size: 40px;
+    position: absolute;
+    bottom: 0;
+    left: -60px;
+    animation: catLife 45s infinite linear;
+    transform-origin: bottom center;
+  }
+  
+  @keyframes catLife {
+    0%   { left: -60px; transform: scaleX(-1) translateY(0) scale(1, 1); }
+    20%  { left: 80%; transform: scaleX(-1) translateY(0) scale(1, 1); }
+    22%  { left: 80%; transform: scaleX(-1) translateY(0) scale(1, 1); }
+    24%  { left: 80%; transform: scaleX(-1) translateY(0) scale(1.3, 0.7); }
+    26%  { left: 80%; transform: scaleX(-1) translateY(0) scale(1, 1); }
+    28%  { left: 80%; transform: scaleX(-1) translateY(-40px) scale(1, 1); }
+    30%  { left: 80%; transform: scaleX(-1) translateY(0) scale(1, 1); }
+    32%  { left: 80%; transform: scaleX(1) translateY(0) scale(1, 1); }
+    50%  { left: 20%; transform: scaleX(1) translateY(0) scale(1, 1); }
+    52%  { left: 20%; transform: scaleX(1) translateY(0) scale(1, 1); }
+    54%  { left: 20%; transform: scaleX(1) translateY(0) scale(1.3, 0.7); }
+    56%  { left: 20%; transform: scaleX(1) translateY(0) scale(1, 1); }
+    58%  { left: 20%; transform: scaleX(1) translateY(-40px) scale(1, 1); }
+    60%  { left: 20%; transform: scaleX(1) translateY(0) scale(1, 1); }
+    62%  { left: 20%; transform: scaleX(-1) translateY(0) scale(1, 1); }
+    80%  { left: 110%; transform: scaleX(-1) translateY(0) scale(1, 1); }
+    100% { left: 110%; transform: scaleX(-1) translateY(0) scale(1, 1); }
+  }
+  
+  .walking-cat::after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 10px;
+    background: rgba(0,0,0,0.1);
+    border-radius: 50%;
+    position: absolute;
+    bottom: -5px;
+    animation: shadowPulse 0.6s infinite alternate;
+  }
+  @keyframes shadowPulse {
+    from { transform: scale(1); opacity: 0.5; }
+    to { transform: scale(0.8); opacity: 0.2; }
+  }
+
+  /* === ОСНОВНОЙ ИНТЕРФЕЙС === */
+  .top-bar { background: var(--primary); color: #fff; padding: 16px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(26, 166, 196, 0.2); position: sticky; top: 0; z-index: 100; }
+  .brand { font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 700; }
+  .brand span { font-weight: 400; opacity: 0.8; }
+  .header-right { display: flex; align-items: center; gap: 20px; }
+  .back-link { font-family: 'Montserrat', sans-serif; font-size: 14px; color: #fff; text-decoration: none; font-weight: 500; opacity: 0.8; transition: opacity 0.2s; }
+  .back-link:hover { opacity: 1; }
+  .stats { display: flex; gap: 12px; font-family: 'Montserrat', sans-serif; font-size: 14px; }
+  .stat-item { background: rgba(255, 255, 255, 0.15); padding: 6px 14px; border-radius: 20px; }
+
+  .container { max-width: 900px; margin: 30px auto; background: var(--bg-card); border-radius: 16px; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05); overflow: hidden; position: relative; z-index: 10; }
+
+  .tabs-nav { display: flex; flex-wrap: wrap; justify-content: center; background: #F9FBFC; border-bottom: 1px solid var(--border); padding: 0 10px; }
+  .tab-btn { font-family: 'Montserrat', sans-serif; background: transparent; border: none; padding: 15px 12px; font-size: 14px; font-weight: 600; color: var(--text-muted); cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s; white-space: nowrap; }
+  .tab-btn:hover { color: var(--primary); }
+  .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+  .tab-btn.hardcore-tab { color: #D84315; }
+  .tab-btn.hardcore-tab.active { color: #D84315; border-bottom-color: #D84315; background: #FBE9E7; }
+
+  .lesson-content { padding: 30px; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* Подвкладки для 7 класса */
+  .sub-tabs { display: flex; gap: 10px; margin-bottom: 20px; background: #fff; padding: 5px; border-radius: 12px; border: 1px solid #FFCCBC; }
+  .sub-tab-btn { flex: 1; padding: 10px; border: none; background: transparent; font-family: 'Montserrat'; font-weight: 600; font-size: 15px; color: #888; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+  .sub-tab-btn.active { background: var(--hardcore); color: #fff; box-shadow: 0 2px 10px rgba(255,87,34,0.3); }
+  .sub-content { display: none; }
+  .sub-content.active { display: block; }
+
+  /* Визуализации */
+  .visual-container { background: #fff; border: 1px solid #EAEAEA; border-radius: 16px; padding: 20px; margin: 20px 0; min-height: 160px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: inset 0 2px 10px rgba(0,0,0,0.02); }
+  .visual-title { font-family: 'Montserrat', sans-serif; font-size: 12px; color: #888; font-weight: 600; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
+
+  /* Пазл */
+  .reciprocal-puzzle { display: flex; align-items: center; gap: 10px; }
+  .puzzle-piece { width: 80px; height: 80px; border: 3px solid #1AA6C4; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 700; color: #1AA6C4; background: #F0F7FA; }
+  .puzzle-plus { font-size: 24px; color: #888; }
+  .puzzle-whole { width: 160px; height: 80px; border: 3px solid #4CAF50; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: 'Montserrat', sans-serif; font-size: 24px; font-weight: 700; color: #4CAF50; background: #E8F5E9; }
+
+  /* Умножение (Сетка) */
+  .mult-grid { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(3, 1fr); width: 200px; height: 150px; border: 2px solid #555; }
+  .mult-cell { border: 1px solid #ddd; background: #fff; }
+  .mult-cell.x { background: rgba(33, 150, 243, 0.2); }
+  .mult-cell.y { background: rgba(245, 179, 1, 0.2); }
+  .mult-cell.xy { background: #A5D6A7; border-color: #4CAF50; }
+
+  /* Деление */
+  .div-visual { display: flex; align-items: flex-end; gap: 15px; }
+  .big-container { width: 150px; height: 60px; border: 3px solid #555; border-radius: 8px 8px 0 0; position: relative; background: #fff; overflow: hidden; }
+  .big-liquid { position: absolute; bottom: 0; left: 0; width: 75%; height: 100%; background: #90CAF9; }
+  .small-cup { width: 30px; height: 40px; border: 2px solid #555; border-radius: 4px 4px 0 0; position: relative; background: #fff; }
+  .small-liquid { position: absolute; bottom: 0; width: 100%; height: 100%; background: #4CAF50; }
+
+  /* Блоки правил */
+  .theory { background: var(--theory-bg); border-left: 4px solid var(--theory-border); border-radius: 0 8px 8px 0; padding: 16px 20px; margin-bottom: 20px; font-size: 16px; }
+  .example { background: var(--example-bg); border-left: 4px solid var(--example-border); border-radius: 0 8px 8px 0; padding: 16px 20px; margin-bottom: 20px; }
+  .block-label { font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 1px; color: var(--text-muted); }
+
+  /* Задания */
+  .task-block { margin-bottom: 24px; background: #fff; padding: 24px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+  .task-question { font-family: 'Montserrat', sans-serif; font-size: 17px; font-weight: 600; margin-bottom: 8px; color: #1A2024; line-height: 1.5; }
+  .task-hint { font-size: 14px; color: var(--text-muted); margin-bottom: 16px; font-style: italic; }
+
+  .input-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .input-answer { font-family: 'Lora', serif; font-size: 16px; padding: 12px 18px; border: 2px solid var(--border); border-radius: 8px; outline: none; width: 100%; max-width: 300px; transition: border-color 0.2s; }
+  .input-answer:focus { border-color: var(--primary); }
+
+  .btn { font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 600; padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+  .btn-primary { background: var(--primary); color: #fff; }
+  .btn-primary:hover { background: var(--primary-dark); }
+  .btn-solution { background: #fff; color: var(--text-muted); border: 2px solid var(--border); }
+  .btn-solution:hover { background: #F4F6F8; color: var(--text-main); border-color: #B3BAC1; }
+  
+  .btn-hardcore { background: var(--hardcore); color: #fff; }
+  .btn-hardcore:hover { background: #E64A19; }
+
+  .feedback { margin-top: 16px; padding: 12px 16px; border-radius: 8px; font-family: 'Montserrat', sans-serif; font-size: 15px; display: none; }
+  .feedback.show { display: block; }
+  .feedback.success { background: #EBF7EB; color: #2E7D32; border-left: 4px solid var(--success); }
+  .feedback.error { background: #FDEDED; color: #C62828; border-left: 4px solid var(--error); }
+
+  .solution-panel { display: none; margin-top: 16px; padding: 16px 20px; background: var(--solution-bg); border: 1px dashed #B3BAC1; border-radius: 8px; font-size: 15px; line-height: 1.6; }
+  .solution-panel.show { display: block; }
+  
+  .answer { display: none; background: var(--teacher-pink); border-left: 5px solid var(--teacher-pink-border); padding: 12px 16px; border-radius: 0 8px 8px 0; margin-top: 16px; font-size: 15px; color: #880E4F; }
+  body.teacher-mode .answer { display: block; }
+
+  /* ЗАЧЁТ */
+  .test-header { display: flex; justify-content: space-between; align-items: center; background: var(--theory-bg); padding: 15px 20px; border-radius: 12px; margin-bottom: 20px; }
+  .test-progress { font-family: 'Montserrat', sans-serif; font-size: 15px; font-weight: 600; color: var(--primary); }
+  .test-tries { font-family: 'Montserrat', sans-serif; font-size: 14px; color: var(--text-muted); }
+  .test-result { text-align: center; padding: 40px 20px; }
+  .test-result h2 { font-family: 'Montserrat', sans-serif; font-size: 24px; color: var(--primary); margin-bottom: 15px; }
+
+  /* ХАРДКОР */
+  .hardcore-container { background: var(--hardcore-bg); border: 2px solid var(--hardcore); border-radius: 16px; padding: 20px; margin: 20px 0; }
+  .hardcore-title { font-family: 'Montserrat', sans-serif; font-size: 18px; font-weight: 700; color: var(--hardcore); margin-bottom: 15px; text-align: center; }
+  .hardcore-q { font-family: 'Courier New', monospace; font-size: 20px; font-weight: 700; color: #1A2024; background: #fff; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 20px; border-left: 4px solid var(--hardcore); }
+
+  /* Стили для 7 класса зачёт */
+  .hardcore-test .test-progress { color: var(--hardcore); }
+  .hardcore-test .btn-primary { background: var(--hardcore); }
+  .hardcore-test .task-block { border-color: #FFCCBC; }
+
+  @media (max-width: 768px) { 
+    .container { margin: 0; border-radius: 0; } .lesson-content { padding: 15px; }
+    .top-bar { padding: 15px 20px; flex-direction: column; gap: 10px; align-items: flex-start; } 
+    .stats { flex-wrap: wrap; }
+    .input-row { flex-direction: column; align-items: stretch; }
+    .btn { width: 100%; }
+    .hardcore-q { font-size: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- КОТИК -->
+<div class="cat-container">
+  <div class="walking-cat">🐈</div>
+</div>
+
+<header class="top-bar">
+  <div class="brand">Северное Сияние <span>· Задачник</span></div>
+  <div class="header-right">
+    <a href="../index.html" class="back-link">&larr; К списку уроков</a>
+    <div class="stats">
+      <div class="stat-item">✅ Верно: <strong id="score">0</strong></div>
+      <div class="stat-item">📝 Попыток: <strong id="attempts">0</strong></div>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <div class="tabs-nav" id="tabs-nav">
+    <button class="tab-btn active" onclick="switchTab(0)">1. Обратные числа</button>
+    <button class="tab-btn" onclick="switchTab(1)">2. Умножение</button>
+    <button class="tab-btn" onclick="switchTab(2)">3. Деление</button>
+    <button class="tab-btn" onclick="switchTab(3)">4. Смешанные</button>
+    <button class="tab-btn" onclick="switchTab(4)">5. Тренажер ∞</button>
+    <button class="tab-btn" onclick="switchTab(5)" style="color:#D84315;">6. Зачёт (6 кл) 📝</button>
+    <button class="tab-btn hardcore-tab" onclick="switchTab(6)">7 класс ⭐</button>
+  </div>
+
+  <div class="lesson-content">
+    
+    <div class="tab-content active" id="tab-0">
+      <div class="theory">
+        <div class="block-label">Теория</div>
+        Два числа называются <strong>взаимно обратными</strong>, если их произведение равно 1. Чтобы найти обратное число для дроби, нужно просто перевернуть её.
+      </div>
+      <div class="visual-container">
+        <div class="visual-title">Собираем в единое целое</div>
+        <div class="reciprocal-puzzle">
+          <div class="puzzle-piece">3/4</div>
+          <div class="puzzle-plus">×</div>
+          <div class="puzzle-piece">4/3</div>
+          <div class="puzzle-plus">=</div>
+          <div class="puzzle-whole">1</div>
+        </div>
+      </div>
+      <div class="example">
+        <div class="block-label">Пример</div>
+        Мастер делает деталь за 3/4 часа. Ученик за 4/3 часа. Вместе — ровно за 1 час.
+      </div>
+      <div class="task-block">
+        <div class="task-question">Задача 1. Найдите число, обратное числу <strong>5/8</strong>.</div>
+        <div class="input-row">
+          <input type="text" class="input-answer" id="in-0-0" placeholder="Например, 8/5">
+          <button class="btn btn-primary" onclick="checkAns('0-0', '8/5')">Проверить</button>
+          <button class="btn btn-solution" onclick="toggleSol('0-0')">Решение</button>
+        </div>
+        <div class="feedback" id="fb-0-0"></div>
+        <div class="solution-panel" id="sol-0-0">Переворачиваем дробь: 8/5.</div>
+        <div class="answer"><strong>Ответ:</strong> 8/5.</div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-1">
+      <div class="theory">
+        <div class="block-label">Теория</div>
+        Умножение дроби на дробь — это поиск <strong>части от части</strong>.
+      </div>
+      <div class="visual-container">
+        <div class="visual-title">3/4 от 2/3 (площадь)</div>
+        <div class="mult-grid">
+          <div class="mult-cell x y xy"></div> <div class="mult-cell x y xy"></div> <div class="mult-cell x y xy"></div> <div class="mult-cell y"></div>
+          <div class="mult-cell x y xy"></div> <div class="mult-cell x y xy"></div> <div class="mult-cell x y xy"></div> <div class="mult-cell y"></div>
+          <div class="mult-cell x"></div> <div class="mult-cell x"></div> <div class="mult-cell x"></div> <div class="mult-cell"></div>
+        </div>
+      </div>
+      <div class="example">
+        <div class="block-label">Пример</div>
+        В саду 24 дерева. 2/3 из них — яблони. Сколько яблонь? 24 · 2/3 = 16.
+      </div>
+      <div class="task-block">
+        <div class="task-question">Задача 1. В классе 30 учеников. 3/5 поехали на экскурсию. Сколько учеников поехало?</div>
+        <div class="input-row">
+          <input type="text" class="input-answer" id="in-1-0" placeholder="Введите число">
+          <button class="btn btn-primary" onclick="checkAns('1-0', '18')">Проверить</button>
+          <button class="btn btn-solution" onclick="toggleSol('1-0')">Решение</button>
+        </div>
+        <div class="feedback" id="fb-1-0"></div>
+        <div class="solution-panel" id="sol-1-0">30 · 3/5 = 18.</div>
+        <div class="answer"><strong>Ответ:</strong> 18.</div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-2">
+      <div class="theory">
+        <div class="block-label">Теория</div>
+        Деление отвечает на вопрос: <strong>«Сколько таких-то частей помещается в целом?»</strong>.
+      </div>
+      <div class="visual-container">
+        <div class="visual-title">3/4 : 1/4 = 3</div>
+        <div class="div-visual">
+          <div class="big-container"><div class="big-liquid"></div></div>
+          <div style="display:flex; gap:5px;">
+            <div class="small-cup"><div class="small-liquid"></div></div>
+            <div class="small-cup"><div class="small-liquid"></div></div>
+            <div class="small-cup"><div class="small-liquid"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="example">
+        <div class="block-label">Пример</div>
+        Есть 3/4 кг конфет. Расфасовка по 1/8 кг. Сколько пакетов? 3/4 : 1/8 = 6.
+      </div>
+      <div class="task-block">
+        <div class="task-question">Задача 1. Лента 2/3 метра разрезается на куски по 1/6 метра. Сколько кусков?</div>
+        <div class="input-row">
+          <input type="text" class="input-answer" id="in-2-0" placeholder="Введите число">
+          <button class="btn btn-primary" onclick="checkAns('2-0', '4')">Проверить</button>
+          <button class="btn btn-solution" onclick="toggleSol('2-0')">Решение</button>
+        </div>
+        <div class="feedback" id="fb-2-0"></div>
+        <div class="solution-panel" id="sol-2-0">2/3 : 1/6 = 4 куска.</div>
+        <div class="answer"><strong>Ответ:</strong> 4.</div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-3">
+      <div class="theory">
+        <div class="block-label">Теория</div>
+        В реальной жизни нужно и умножать, и делить дроби в одной задаче.
+      </div>
+      <div class="example">
+        <div class="block-label">Пример</div>
+        Привезли 60 кг картофеля. В первый день продали 2/5. Во второй — 1/3 от первого. 60 · 2/5 = 24 кг. 24 · 1/3 = 8 кг.
+      </div>
+      <div class="task-block">
+        <div class="task-question">Задача 1. В книге 300 страниц. Ученик прочитал 1/5 книги. Затем ещё 1/2 от оставшейся части. Сколько страниц осталось?</div>
+        <div class="input-row">
+          <input type="text" class="input-answer" id="in-3-0" placeholder="Введите число">
+          <button class="btn btn-primary" onclick="checkAns('3-0', '120')">Проверить</button>
+          <button class="btn btn-solution" onclick="toggleSol('3-0')">Решение</button>
+        </div>
+        <div class="feedback" id="fb-3-0"></div>
+        <div class="solution-panel" id="sol-3-0">1) 300 · 1/5 = 60 (осталось 240). 2) 240 · 1/2 = 120. 3) Осталось 240 - 120 = 120.</div>
+        <div class="answer"><strong>Ответ:</strong> 120.</div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-4">
+      <div class="theory" style="text-align:center; background:var(--gold-bg); border-color:var(--gold-border);">
+        <div class="block-label" style="color:#9e7200;">Бесконечный тренажер</div>
+        <p>Задачи генерируются случайно. Ограничений нет!</p>
+      </div>
+      <div class="task-block" style="border-color: var(--gold-border);">
+        <div class="task-question" id="gen-q" style="min-height: 60px;">Загрузка...</div>
+        <div class="input-row">
+          <input type="text" class="input-answer" id="gen-in" placeholder="Ваш ответ">
+          <button class="btn btn-primary" onclick="checkGen()">Проверить</button>
+          <button class="btn btn-next" style="background:#fff; color:var(--primary); border:2px solid var(--primary);" onclick="nextGen()">Другая &rarr;</button>
+          <button class="btn btn-solution" onclick="toggleGenSol()">Решение</button>
+        </div>
+        <div class="feedback" id="fb-gen"></div>
+        <div class="solution-panel" id="sol-gen"></div>
+        <div class="answer" id="ta-gen"></div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-5">
+      <div id="test-start-view" style="text-align: center; padding: 40px 20px;">
+        <h2 style="font-family:'Montserrat'; color:var(--primary); margin-bottom:15px;">Зачёт по дробям</h2>
+        <p style="margin-bottom:20px; color:#666;">5 вопросов из базы. На каждый дается 2 попытки.</p>
+        <button class="btn btn-primary" onclick="startQuiz()" style="font-size: 18px; padding: 15px 40px;">Начать зачёт</button>
+      </div>
+      <div id="test-question-view" style="display: none;">
+        <div class="test-header">
+          <div class="test-progress" id="test-progress">Вопрос 1 из 5</div>
+          <div class="test-tries" id="test-tries">Попыток: 2</div>
+        </div>
+        <div class="task-block" style="min-height: 200px;">
+          <div class="task-question" id="test-q" style="font-size: 18px; margin-bottom: 20px;"></div>
+          <div class="input-row">
+            <input type="text" class="input-answer" id="test-in" placeholder="Введите ответ">
+            <button class="btn btn-primary" onclick="checkQuizAns()" id="test-btn-check">Ответить</button>
+          </div>
+          <div class="feedback" id="fb-test"></div>
+          <div id="test-next-wrap" style="display: none; margin-top: 20px;">
+            <button class="btn btn-primary" onclick="nextQuizQuestion()" style="width: 100%;">Следующий вопрос &rarr;</button>
+          </div>
+          <div class="solution-panel" id="sol-test"></div>
+        </div>
+      </div>
+      <div id="test-result-view" style="display: none;" class="test-result">
+        <h2>Зачёт завершен!</h2>
+        <p style="font-size: 20px; margin-bottom: 20px;">Ваш результат: <strong id="test-score" style="color: var(--success); font-size: 28px;"></strong> из 5</p>
+        <button class="btn btn-primary" onclick="startQuiz()">Пройти ещё раз</button>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-6">
+      <div class="sub-tabs">
+        <button class="sub-tab-btn active" onclick="switchSubTab(6, 0)">Материал и Тренажёр</button>
+        <button class="sub-tab-btn" onclick="switchSubTab(6, 1)">Зачёт (7 кл) 📝</button>
+      </div>
+
+      <div class="sub-content active" id="sub-tab-6-0">
+        <div class="hardcore-container">
+          <div class="hardcore-title">⭐ Задачи повышенной сложности (7 класс)</div>
+          <div class="theory" style="background: #fff; border-left-color: var(--hardcore);">
+            <div class="block-label" style="color: var(--hardcore);">Теория</div>
+            Здесь мы работаем с <strong>отрицательными дробями</strong>, <strong>смешанными числами</strong> (переводим в неправильные дроби!) и <strong>действиями в скобках</strong>.
+          </div>
+          <div class="example" style="background: #fff; border-left-color: #FF8A65;">
+            <div class="block-label" style="color: #FF8A65;">Пример</div>
+            Вычислите: <strong>(-2/3 + 1/2) · 3/4</strong><br>
+            1) В скобках: -4/6 + 3/6 = -1/6.<br>
+            2) Умножаем: -1/6 · 3/4 = -3/24 = -1/8.
+          </div>
+          <div class="task-block" style="border-color: #FF8A65;">
+            <div class="task-question">Задача 1. Вычислите: <span style="font-family:monospace; color:#D84315;">2 1/3 · 1 1/2 - 1 1/5</span></div>
+            <div class="input-row">
+              <input type="text" class="input-answer" id="in-6-0" placeholder="Например, 23/10">
+              <button class="btn btn-hardcore" onclick="checkAns('6-0', '23/10')">Проверить</button>
+              <button class="btn btn-solution" onclick="toggleSol('6-0')">Решение</button>
+            </div>
+            <div class="feedback" id="fb-6-0"></div>
+            <div class="solution-panel" id="sol-6-0">1) 2 1/3 = 7/3; 1 1/2 = 3/2.<br>2) 7/3 · 3/2 = 21/6 = 7/2 = 3 1/2.<br>3) 3 1/2 - 1 1/5 = 7/2 - 6/5 = 35/10 - 12/10 = 23/10 = 2.3.</div>
+            <div class="answer"><strong>Ответ:</strong> 23/10 (или 2,3).</div>
+          </div>
+          <div class="task-block" style="border-color: #FF8A65; margin-top: 30px;">
+            <div class="task-badge" style="background: var(--hardcore); color:#fff; display:inline-block; padding:4px 10px; border-radius:12px; font-family:'Montserrat'; font-size:11px; font-weight:700; margin-bottom:12px;">Генератор (Hardcore)</div>
+            <div class="hardcore-q" id="hc-gen-q">Загрузка...</div>
+            <div class="input-row">
+              <input type="text" class="input-answer" id="hc-gen-in" placeholder="Введите ответ">
+              <button class="btn btn-hardcore" onclick="checkHcGen()">Проверить</button>
+              <button class="btn btn-next" style="background:#fff; color:var(--hardcore); border:2px solid var(--hardcore);" onclick="nextHcGen()">Другая &rarr;</button>
+              <button class="btn btn-solution" onclick="toggleHcGenSol()">Решение</button>
+            </div>
+            <div class="feedback" id="fb-hc-gen"></div>
+            <div class="solution-panel" id="sol-hc-gen"></div>
+            <div class="answer" id="ta-hc-gen"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-content" id="sub-tab-6-1">
+        <div id="hc-test-start-view" style="text-align: center; padding: 40px 20px;">
+          <h2 style="font-family:'Montserrat'; color:var(--hardcore); margin-bottom:15px;">Зачёт (7 класс)</h2>
+          <p style="margin-bottom:20px; color:#666;">Смешанные числа, скобки и отрицательные дроби. 5 вопросов, 2 попытки.</p>
+          <button class="btn btn-hardcore" onclick="startHcQuiz()" style="font-size: 18px; padding: 15px 40px;">Начать зачёт</button>
+        </div>
+        <div id="hc-test-question-view" style="display: none;" class="hardcore-test">
+          <div class="test-header">
+            <div class="test-progress" id="hc-test-progress">Вопрос 1 из 5</div>
+            <div class="test-tries" id="hc-test-tries">Попыток: 2</div>
+          </div>
+          <div class="task-block" style="min-height: 200px; background: #fff;">
+            <div class="hardcore-q" id="hc-test-q" style="margin-bottom: 20px; font-size: 18px;"></div>
+            <div class="input-row">
+              <input type="text" class="input-answer" id="hc-test-in" placeholder="Введите ответ">
+              <button class="btn btn-hardcore" onclick="checkHcQuizAns()" id="hc-test-btn-check">Ответить</button>
+            </div>
+            <div class="feedback" id="fb-hc-test"></div>
+            <div id="hc-test-next-wrap" style="display: none; margin-top: 20px;">
+              <button class="btn btn-hardcore" onclick="nextHcQuizQuestion()" style="width: 100%;">Следующий вопрос &rarr;</button>
+            </div>
+            <div class="solution-panel" id="sol-hc-test"></div>
+          </div>
+        </div>
+        <div id="hc-test-result-view" style="display: none;" class="test-result">
+          <h2 style="color: var(--hardcore);">Зачёт (7 класс) завершен!</h2>
+          <p style="font-size: 20px; margin-bottom: 20px;">Ваш результат: <strong id="hc-test-score" style="color: var(--hardcore); font-size: 28px;"></strong> из 5</p>
+          <button class="btn btn-hardcore" onclick="startHcQuiz()">Пройти ещё раз</button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<script>
+  if (window.location.search.includes('mode=teacher')) document.body.classList.add('teacher-mode');
+
+  let score = 0, attempts = 0;
+
+  function switchTab(index) {
+    document.querySelectorAll('.tab-btn').forEach((btn, i) => btn.classList.toggle('active', i === index));
+    document.querySelectorAll('.tab-content').forEach((el, i) => el.classList.toggle('active', i === index));
+    if (index === 4 && document.getElementById('gen-q').innerText.includes('Загрузка')) nextGen();
+    if (index === 6 && document.getElementById('hc-gen-q').innerText.includes('Загрузка')) nextHcGen();
+  }
+
+  function switchSubTab(tabIndex, subIndex) {
+    const tab = document.getElementById('tab-' + tabIndex);
+    const btns = tab.querySelectorAll('.sub-tab-btn');
+    const contents = tab.querySelectorAll('.sub-content');
+    btns.forEach((btn, i) => btn.classList.toggle('active', i === subIndex));
+    contents.forEach((el, i) => el.classList.toggle('active', i === subIndex));
+  }
+
+  function parseUserAnswer(str) {
+    str = str.trim().toLowerCase().replace(/,/g, '.');
+    if (str.includes('/')) {
+      const parts = str.split('/');
+      if (parts.length === 2) {
+        const num = parseFloat(parts[0]), den = parseFloat(parts[1]);
+        if (!isNaN(num) && !isNaN(den) && den !== 0) return [num, den];
+      }
+    }
+    const val = parseFloat(str);
+    if (!isNaN(val)) return [val, 1];
+    return null;
+  }
+
+  function checkAns(id, correctStr) {
+    const input = document.getElementById('in-' + id);
+    const fb = document.getElementById('fb-' + id);
+    const userStr = input.value.trim();
+    if (!userStr) return;
+
+    attempts++;
+    const userFrac = parseUserAnswer(userStr);
+    const correctFrac = parseUserAnswer(correctStr);
+    let isCorrect = false;
+
+    if (userFrac && correctFrac && Math.abs(userFrac[0] * correctFrac[1]) === Math.abs(correctFrac[0] * userFrac[1])) {
+      isCorrect = true;
+    }
+
+    if (isCorrect) {
+      score++;
+      fb.className = 'feedback show success';
+      fb.innerHTML = '✅ <strong>Верно!</strong>';
+    } else {
+      fb.className = 'feedback show error';
+      fb.innerHTML = '❌ <strong>Не совсем.</strong> Проверьте вычисления.';
+    }
+
+    document.getElementById('score').textContent = score;
+    document.getElementById('attempts').textContent = attempts;
+  }
+
+  function toggleSol(id) {
+    document.getElementById('sol-' + id).classList.toggle('show');
+  }
+
+  // === ГЕНЕРАТОР ЗАДАЧ (6 КЛАСС) ===
+  const genData = { q: '', a: '', s: '' };
+  const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+  const getGCD = (a, b) => b === 0 ? a : getGCD(b, a % b);
+  const simplifyFraction = (num, den) => {
+    let g = getGCD(Math.abs(num), Math.abs(den));
+    num /= g; den /= g;
+    return den === 1 ? num.toString() : `${num}/${den}`;
+  };
+
+  function nextGen() {
+    const type = getRandomInt(1, 3);
+    if (type === 1) {
+      let total = getRandomInt(20, 100);
+      let n1 = getRandomInt(1, 5);
+      let d1 = getRandomInt(n1 + 1, 10);
+      let ans = simplifyFraction(total * n1, d1);
+      genData.q = `В магазине было <strong>${total} кг</strong> яблок. За день продали <strong>${n1}/${d1}</strong>. Сколько кг продали?`;
+      genData.a = ans;
+      genData.s = `${total} · ${n1}/${d1} = ${ans}.`;
+    } else if (type === 2) {
+      let totalParts = getRandomInt(2, 6);
+      let n2 = 1;
+      let d2 = getRandomInt(3, 15);
+      let totalFracNum = totalParts * n2;
+      let totalFracDen = d2;
+      let g = getGCD(totalFracNum, totalFracDen);
+      totalFracNum /= g; totalFracDen /= g;
+      genData.q = `Есть <strong>${totalFracNum}/${totalFracDen} м</strong> ленты. Режем на куски по <strong>${n2}/${d2} м</strong>. Сколько кусков?`;
+      genData.a = totalParts.toString();
+      genData.s = `${totalFracNum}/${totalFracDen} : ${n2}/${d2} = ${totalParts}.`;
+    } else {
+      let n1 = getRandomInt(2, 9);
+      let d1 = getRandomInt(n1 + 1, 15);
+      genData.q = `Найдите число, обратное числу <strong>${n1}/${d1}</strong>.`;
+      genData.a = `${d1}/${n1}`;
+      genData.s = `Переворачиваем: ${d1}/${n1}.`;
+    }
+    document.getElementById('gen-q').innerHTML = genData.q;
+    document.getElementById('gen-in').value = '';
+    document.getElementById('fb-gen').className = 'feedback';
+    document.getElementById('sol-gen').classList.remove('show');
+    document.getElementById('sol-gen').innerHTML = `<strong>Решение:</strong><br><br>${genData.s}`;
+    document.getElementById('ta-gen').innerHTML = `<strong>Ответ:</strong> ${genData.a}`;
+  }
+
+  function checkGen() { checkGenLogic('gen'); }
+  function toggleGenSol() { document.getElementById('sol-gen').classList.toggle('show'); }
+
+  // === 7 КЛАСС (HARDCORE) ТРЕНАЖЕР ===
+  const hcData = { q: '', a: '', s: '' };
+  
+  function nextHcGen() {
+    const type = getRandomInt(1, 3);
+    
+    if (type === 1) {
+      let n1 = getRandomInt(2, 7);
+      let d1 = getRandomInt(2, 9);
+      let mult = getRandomInt(2, 5);
+      let n2 = n1 * mult;
+      let d2 = d1 * mult;
+      let ansNum = n2 * d1;
+      let ansDen = d2 * n1;
+      let ans = simplifyFraction(ansNum, ansDen);
+      hcData.q = `Решите уравнение: <strong>${n1}/${d1} · x = ${n2}/${d2}</strong>`;
+      hcData.a = ans;
+      hcData.s = `x = ${n2}/${d2} : ${n1}/${d1} = ${n2}/${d2} · ${d1}/${n1} = ${ansNum}/${ansDen} = ${ans}.`;
+    } else if (type === 2) {
+      let a = getRandomInt(1, 5); let b = getRandomInt(2, 6);
+      let c = getRandomInt(1, 5); let d = getRandomInt(2, 6);
+      let e = getRandomInt(1, 4); let f = getRandomInt(2, 6);
+      let num1 = (a*d - c*b); let den1 = b*d;
+      let frac1 = simplifyFraction(num1, den1);
+      let num2 = num1 * e; let den2 = den1 * f;
+      let ans = simplifyFraction(num2, den2);
+      hcData.q = `Вычислите: <strong>(${a}/${b} - ${c}/${d}) · ${e}/${f}</strong>`;
+      hcData.a = ans;
+      hcData.s = `1) В скобках: ${a}/${b} - ${c}/${d} = ${a*d}/${b*d} - ${c*b}/${b*d} = ${num1}/${den1} (или ${frac1}).<br>2) Умножаем: ${frac1} · ${e}/${f} = ${ans}.`;
+    } else {
+      let whole1 = getRandomInt(1, 3); let n1 = getRandomInt(1, 5); let d1 = getRandomInt(n1 + 1, 8);
+      let whole2 = getRandomInt(1, 3); let n2 = getRandomInt(1, 5); let d2 = getRandomInt(n2 + 1, 8);
+      let imp1_num = whole1 * d1 + n1; let imp2_num = whole2 * d2 + n2;
+      let ansNum = imp1_num * imp2_num; let ansDen = d1 * d2;
+      let ans = simplifyFraction(ansNum, ansDen);
+      hcData.q = `Вычислите: <strong>${whole1} ${n1}/${d1} · ${whole2} ${n2}/${d2}</strong>`;
+      hcData.a = ans;
+      hcData.s = `Переводим: ${whole1} ${n1}/${d1} = ${imp1_num}/${d1}; ${whole2} ${n2}/${d2} = ${imp2_num}/${d2}.<br>Умножаем: ${imp1_num}/${d1} · ${imp2_num}/${d2} = ${ansNum}/${ansDen} = ${ans}.`;
+    }
+    document.getElementById('hc-gen-q').innerHTML = hcData.q;
+    document.getElementById('hc-gen-in').value = '';
+    document.getElementById('fb-hc-gen').className = 'feedback';
+    document.getElementById('sol-hc-gen').classList.remove('show');
+    document.getElementById('sol-hc-gen').innerHTML = `<strong>Решение:</strong><br><br>${hcData.s}`;
+    document.getElementById('ta-hc-gen').innerHTML = `<strong>Ответ:</strong> ${hcData.a}`;
+  }
+
+  function checkHcGen() { checkGenLogic('hc-gen'); }
+  function toggleHcGenSol() { document.getElementById('sol-hc-gen').classList.toggle('show'); }
+
+  function checkGenLogic(idPrefix) {
+    const isHc = idPrefix === 'hc-gen';
+    const data = isHc ? hcData : genData;
+    const input = document.getElementById(idPrefix + '-in');
+    const fb = document.getElementById('fb-' + idPrefix);
+    const userStr = input.value.trim();
+    if (!userStr) return;
+    const userFrac = parseUserAnswer(userStr);
+    const correctFrac = parseUserAnswer(data.a);
+    let isCorrect = false;
+    if (userFrac && correctFrac && Math.abs(userFrac[0] * correctFrac[1]) === Math.abs(correctFrac[0] * userFrac[1])) isCorrect = true;
+    if (isCorrect) {
+      if (isHc) score++;
+      fb.className = 'feedback show success';
+      fb.innerHTML = '✅ <strong>Верно!</strong>';
+    } else {
+      fb.className = 'feedback show error';
+      fb.innerHTML = '❌ <strong>Не совсем.</strong> Проверьте вычисления.';
+    }
+    document.getElementById('score').textContent = score;
+  }
+
+  // === ЛОГИКА ЗАЧЁТА (6 КЛАСС) ===
+  const quizPool = [
+    { q: "Найдите число, обратное 3/7.", a: "7/3" }, { q: "Найдите число, обратное 8/11.", a: "11/8" },
+    { q: "В классе 40 учеников. 2/5 — мальчики. Сколько мальчиков?", a: "16" }, { q: "В саду 60 деревьев. 3/4 — яблони. Сколько яблонь?", a: "45" },
+    { q: "Вычислите: 2/3 · 3/4.", a: "1/2" }, { q: "Вычислите: 5/8 · 4/15.", a: "1/6" },
+    { q: "Лента 3/4 м разрезана на куски по 1/8 м. Сколько кусков?", a: "6" }, { q: "В баке 5/6 т бензина. За раз 1/12 т. За сколько рейсов?", a: "10" },
+    { q: "Вычислите: 3/5 : 3/10.", a: "2" }, { q: "Вычислите: 7/9 : 14/27.", a: "3/2" },
+    { q: "В магазине 80 кг яблок. Продали 1/4. Сколько осталось?", a: "60" }, { q: "Книга 200 страниц. Прочитали 1/5. Осталось?", a: "160" },
+    { q: "Вычислите: 4/5 · 15/16.", a: "3/4" }, { q: "Найдите обратное к 6.", a: "1/6" }, { q: "Сколько порций по 1/4 кг в 3/4 кг?", a: "3" }
+  ];
+
+  let quizState = { qs: [], idx: 0, score: 0, tries: 0, currentQ: null };
+
+  function startQuiz() {
+    let shuffled = [...quizPool].sort(() => 0.5 - Math.random());
+    quizState.qs = shuffled.slice(0, 5);
+    quizState.idx = 0; quizState.score = 0;
+    document.getElementById('test-start-view').style.display = 'none';
+    document.getElementById('test-result-view').style.display = 'none';
+    document.getElementById('test-question-view').style.display = 'block';
+    loadQuizQuestion();
+  }
+
+  function loadQuizQuestion() {
+    quizState.tries = 0;
+    quizState.currentQ = quizState.qs[quizState.idx];
+    document.getElementById('test-progress').innerText = `Вопрос ${quizState.idx + 1} из 5`;
+    document.getElementById('test-tries').innerText = `Попыток: 2`;
+    document.getElementById('test-q').innerHTML = quizState.currentQ.q;
+    document.getElementById('test-in').value = '';
+    document.getElementById('test-in').disabled = false;
+    document.getElementById('fb-test').className = 'feedback';
+    document.getElementById('sol-test').classList.remove('show');
+    document.getElementById('test-next-wrap').style.display = 'none';
+    document.getElementById('test-btn-check').style.display = 'inline-block';
+    document.getElementById('test-btn-check').innerText = 'Ответить';
+  }
+
+  function checkQuizAns() {
+    const input = document.getElementById('test-in');
+    const fb = document.getElementById('fb-test');
+    const userStr = input.value.trim();
+    if (!userStr) return;
+    quizState.tries++;
+    
+    if (document.body.classList.contains('teacher-mode')) {
+        fb.className = 'feedback show success';
+        fb.innerHTML = `Ответ: ${quizState.currentQ.a}`;
+        finishQuizQuestion();
+        return;
+    }
+
+    const userFrac = parseUserAnswer(userStr);
+    const correctFrac = parseUserAnswer(quizState.currentQ.a);
+    let isCorrect = false;
+    if (userFrac && correctFrac && Math.abs(userFrac[0] * correctFrac[1]) === Math.abs(correctFrac[0] * userFrac[1])) isCorrect = true;
+
+    if (isCorrect) {
+      quizState.score++; score++;
+      fb.className = 'feedback show success';
+      fb.innerHTML = '✅ <strong>Верно!</strong>';
+      finishQuizQuestion();
+    } else {
+      if (quizState.tries >= 2) {
+        fb.className = 'feedback show error';
+        fb.innerHTML = '❌ <strong>Попытки закончились.</strong> Правильный ответ показан ниже.';
+        document.getElementById('sol-test').innerHTML = `<strong>Правильный ответ:</strong> ${quizState.currentQ.a}`;
+        document.getElementById('sol-test').classList.add('show');
+        finishQuizQuestion();
+      } else {
+        quizState.tries--;
+        fb.className = 'feedback show error';
+        fb.innerHTML = `❌ <strong>Не совсем.</strong> У вас осталась <strong>1 попытка</strong>.`;
+        document.getElementById('test-tries').innerText = `Попыток: 1`;
+        input.value = '';
+        quizState.tries++;
+      }
+    }
+    document.getElementById('score').textContent = score;
+    document.getElementById('attempts').textContent = quizState.idx + 1;
+  }
+
+  function finishQuizQuestion() {
+    document.getElementById('test-in').disabled = true;
+    document.getElementById('test-btn-check').style.display = 'none';
+    document.getElementById('test-next-wrap').style.display = 'block';
+    if (quizState.idx === 4) document.querySelector('#test-next-wrap .btn').innerText = 'Завершить зачёт';
+  }
+
+  function nextQuizQuestion() {
+    quizState.idx++;
+    if (quizState.idx >= 5) {
+      document.getElementById('test-question-view').style.display = 'none';
+      document.getElementById('test-result-view').style.display = 'block';
+      document.getElementById('test-score').innerText = `${quizState.score} / 5`;
+    } else {
+      loadQuizQuestion();
+    }
+  }
+
+  // === ЛОГИКА ЗАЧЁТА (7 КЛАСС) ===
+  const hcQuizPool = [
+    { q: "Вычислите: (1/2 - 1/3) · 6", a: "1" },
+    { q: "Вычислите: -2/5 · 15/4", a: "-3/2" },
+    { q: "Решите уравнение: 3/4 · x = 9/8", a: "3/2" },
+    { q: "Вычислите: 2 1/2 · 2 2/3", a: "20/3" },
+    { q: "Вычислите: 1 1/3 + 2 1/6", a: "7/2" },
+    { q: "Вычислите: -3/7 : (-9/14)", a: "2/3" },
+    { q: "Решите уравнение: -2/3 · x = 4/9", a: "-2/3" },
+    { q: "Вычислите: (3/4 - 1/2) : 1/8", a: "2" },
+    { q: "Вычислите: 3 3/4 : 1 1/2", a: "5/2" },
+    { q: "Найдите значение: (-1/2)³", a: "-1/8" },
+    { q: "Вычислите: 5/6 - (-1/3)", a: "7/6" },
+    { q: "Вычислите: -4/5 · (-10/3)", a: "8/3" }
+  ];
+
+  let hcQuizState = { qs: [], idx: 0, score: 0, tries: 0, currentQ: null };
+
+  function startHcQuiz() {
+    let shuffled = [...hcQuizPool].sort(() => 0.5 - Math.random());
+    hcQuizState.qs = shuffled.slice(0, 5);
+    hcQuizState.idx = 0; hcQuizState.score = 0;
+    document.getElementById('hc-test-start-view').style.display = 'none';
+    document.getElementById('hc-test-result-view').style.display = 'none';
+    document.getElementById('hc-test-question-view').style.display = 'block';
+    loadHcQuizQuestion();
+  }
+
+  function loadHcQuizQuestion() {
+    hcQuizState.tries = 0;
+    hcQuizState.currentQ = hcQuizState.qs[hcQuizState.idx];
+    document.getElementById('hc-test-progress').innerText = `Вопрос ${hcQuizState.idx + 1} из 5`;
+    document.getElementById('hc-test-tries').innerText = `Попыток: 2`;
+    document.getElementById('hc-test-q').innerHTML = hcQuizState.currentQ.q;
+    document.getElementById('hc-test-in').value = '';
+    document.getElementById('hc-test-in').disabled = false;
+    document.getElementById('fb-hc-test').className = 'feedback';
+    document.getElementById('sol-hc-test').classList.remove('show');
+    document.getElementById('hc-test-next-wrap').style.display = 'none';
+    document.getElementById('hc-test-btn-check').style.display = 'inline-block';
+    document.getElementById('hc-test-btn-check').innerText = 'Ответить';
+  }
+
+  function checkHcQuizAns() {
+    const input = document.getElementById('hc-test-in');
+    const fb = document.getElementById('fb-hc-test');
+    const userStr = input.value.trim();
+    if (!userStr) return;
+    hcQuizState.tries++;
+    
+    if (document.body.classList.contains('teacher-mode')) {
+        fb.className = 'feedback show success';
+        fb.innerHTML = `Ответ: ${hcQuizState.currentQ.a}`;
+        finishHcQuizQuestion();
+        return;
+    }
+
+    const userFrac = parseUserAnswer(userStr);
+    const correctFrac = parseUserAnswer(hcQuizState.currentQ.a);
+    let isCorrect = false;
+    if (userFrac && correctFrac && Math.abs(userFrac[0] * correctFrac[1]) === Math.abs(correctFrac[0] * userFrac[1])) isCorrect = true;
+
+    if (isCorrect) {
+      hcQuizState.score++; score++;
+      fb.className = 'feedback show success';
+      fb.innerHTML = '✅ <strong>Верно!</strong>';
+      finishHcQuizQuestion();
+    } else {
+      if (hcQuizState.tries >= 2) {
+        fb.className = 'feedback show error';
+        fb.innerHTML = '❌ <strong>Попытки закончились.</strong> Правильный ответ показан ниже.';
+        document.getElementById('sol-hc-test').innerHTML = `<strong>Правильный ответ:</strong> ${hcQuizState.currentQ.a}`;
+        document.getElementById('sol-hc-test').classList.add('show');
+        finishHcQuizQuestion();
+      } else {
+        hcQuizState.tries--;
+        fb.className = 'feedback show error';
+        fb.innerHTML = `❌ <strong>Не совсем.</strong> У вас осталась <strong>1 попытка</strong>.`;
+        document.getElementById('hc-test-tries').innerText = `Попыток: 1`;
+        input.value = '';
+        hcQuizState.tries++;
+      }
+    }
+    document.getElementById('score').textContent = score;
+    document.getElementById('attempts').textContent = hcQuizState.idx + 1;
+  }
+
+  function finishHcQuizQuestion() {
+    document.getElementById('hc-test-in').disabled = true;
+    document.getElementById('hc-test-btn-check').style.display = 'none';
+    document.getElementById('hc-test-next-wrap').style.display = 'block';
+    if (hcQuizState.idx === 4) document.querySelector('#hc-test-next-wrap .btn').innerText = 'Завершить зачёт';
+  }
+
+  function nextHcQuizQuestion() {
+    hcQuizState.idx++;
+    if (hcQuizState.idx >= 5) {
+      document.getElementById('hc-test-question-view').style.display = 'none';
+      document.getElementById('hc-test-result-view').style.display = 'block';
+      document.getElementById('hc-test-score').innerText = `${hcQuizState.score} / 5`;
+    } else {
+      loadHcQuizQuestion();
+    }
+  }
+
+  window.onload = () => { nextGen(); nextHcGen(); };
+</script>
+
+</body>
+</html>
