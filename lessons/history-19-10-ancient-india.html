@@ -354,17 +354,25 @@
     if (index === 3 && document.getElementById('trainer-q').innerText.includes('Загрузка')) nextTrainer();
   }
 
+  // Универсальная функция нормализации ответа (игнорирует порядок слов, союзы, знаки препинания)
+  function normalizeAnswer(str) {
+    let s = str.toLowerCase();
+    // Удаляем знаки препинания
+    s = s.replace(/[.,;:!?()]/g, ' ');
+    // Удаляем союзы "и", "или" как отдельные слова
+    s = s.replace(/\b(и|или)\b/g, ' ');
+    // Разбиваем на массив слов, убираем пустые элементы, сортируем и склеиваем
+    return s.split(/\s+/).filter(Boolean).sort().join('');
+  }
+
   function checkAns(id, correctStr) {
     const input = document.getElementById('in-' + id);
     const fb = document.getElementById('fb-' + id);
-    const userStr = input.value.trim().toLowerCase();
+    const userStr = input.value.trim();
     if (!userStr) return;
     attempts++;
     
-    const cleanUser = userStr.replace(/[\s,]/g, '');
-    const cleanCorrect = correctStr.toLowerCase().replace(/[\s,]/g, '');
-
-    if (cleanUser === cleanCorrect) {
+    if (normalizeAnswer(userStr) === normalizeAnswer(correctStr)) {
       score++;
       fb.className = 'feedback show success';
       fb.innerHTML = '✅ <strong>Верно!</strong>';
@@ -431,10 +439,11 @@
   function checkTrainer() {
     const input = document.getElementById('trainer-in');
     const fb = document.getElementById('fb-trainer');
-    const userStr = input.value.trim().toLowerCase();
+    const userStr = input.value.trim();
     if (!userStr) return;
     attempts++;
-    if (userStr === currentTrainerTask.a) {
+    
+    if (normalizeAnswer(userStr) === normalizeAnswer(currentTrainerTask.a)) {
       score++;
       fb.className = 'feedback show success';
       fb.innerHTML = '✅ <strong>Верно!</strong>';
@@ -488,7 +497,7 @@
   function checkQuizAns() {
     const input = document.getElementById('test-in');
     const fb = document.getElementById('fb-test');
-    const userStr = input.value.trim().toLowerCase();
+    const userStr = input.value.trim();
     if (!userStr) return;
     quizState.tries++;
     
@@ -499,10 +508,7 @@
         return;
     }
     
-    const cleanUser = userStr.replace(/[\s,]/g, '');
-    const cleanCorrect = quizState.currentQ.a.toLowerCase().replace(/[\s,]/g, '');
-    
-    if (cleanUser === cleanCorrect) {
+    if (normalizeAnswer(userStr) === normalizeAnswer(quizState.currentQ.a)) {
       quizState.score++; score++;
       fb.className = 'feedback show success';
       fb.innerHTML = '✅ <strong>Верно!</strong>';
