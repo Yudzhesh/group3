@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Категория состояния · Северное Сияние</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #1AA6C4; --primary-dark: #158AA3; --bg-body: #F4F6F8; --bg-card: #FFFFFF;
+    --text-main: #2C3338; --text-muted: #6B7785; --border: #E4E8EB;
+    --theory-bg: #F0F7FA; --theory-border: #1AA6C4; --example-bg: #F4F9F0; --example-border: #7A9A6A;
+    --success: #4CAF50; --error: #E53935;
+    --teacher-pink: #FDF2F8; --teacher-pink-border: #D81B60; --solution-bg: #F8F9FA;
+    --hardcore: #8E24AA; --hardcore-bg: #F6F2FA; /* Фиолетовый для 7 класса */
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  body { font-family: 'Lora', Georgia, serif; background: var(--bg-body); color: var(--text-main); line-height: 1.75; font-size: 17px; padding-bottom: 80px; }
+
+  .top-bar { background: var(--primary); color: #fff; padding: 16px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(26, 166, 196, 0.2); position: sticky; top: 0; z-index: 100; }
+  .brand { font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 700; }
+  .brand span { font-weight: 400; opacity: 0.8; }
+  .header-right { display: flex; align-items: center; gap: 20px; }
+  .back-link { font-family: 'Montserrat', sans-serif; font-size: 14px; color: #fff; text-decoration: none; font-weight: 500; opacity: 0.8; transition: opacity 0.2s; }
+  .back-link:hover { opacity: 1; }
+  .stats { display: flex; gap: 12px; font-family: 'Montserrat', sans-serif; font-size: 14px; }
+  .stat-item { background: rgba(255, 255, 255, 0.15); padding: 6px 14px; border-radius: 20px; }
+
+  .container { max-width: 900px; margin: 30px auto; background: var(--bg-card); border-radius: 16px; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05); overflow: hidden; }
+
+  .tabs-nav { display: flex; flex-wrap: wrap; justify-content: center; background: #F9FBFC; border-bottom: 1px solid var(--border); padding: 0 10px; }
+  .tab-btn { font-family: 'Montserrat', sans-serif; background: transparent; border: none; padding: 15px 12px; font-size: 14px; font-weight: 600; color: var(--text-muted); cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s; white-space: nowrap; }
+  .tab-btn:hover { color: var(--primary); }
+  .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+  .tab-btn.hardcore-tab { color: var(--hardcore); }
+  .tab-btn.hardcore-tab.active { color: var(--hardcore); border-bottom-color: var(--hardcore); background: var(--hardcore-bg); }
+
+  .lesson-content { padding: 30px; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* Блоки */
+  .theory { background: var(--theory-bg); border-left: 4px solid var(--theory-border); border-radius: 0 8px 8px 0; padding: 16px 20px; margin-bottom: 20px; font-size: 16px; }
+  .example { background: var(--example-bg); border-left: 4px solid var(--example-border); border-radius: 0 8px 8px 0; padding: 16px 20px; margin-bottom: 20px; }
+  .block-label { font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 1px; color: var(--text-muted); }
+  
+  /* Таблица */
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; background: #fff; font-size: 15px; }
+  th, td { border: 1px solid var(--border); padding: 10px 12px; text-align: left; vertical-align: top; }
+  th { background: #eef2f5; color: #2c4152; font-family: 'Montserrat', sans-serif; font-size: 14px; }
+
+  /* Задания */
+  .task-block { margin-bottom: 24px; background: #fff; padding: 24px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+  .task-question { font-family: 'Montserrat', sans-serif; font-size: 17px; font-weight: 600; margin-bottom: 16px; color: #1A2024; line-height: 1.5; }
+  .input-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .input-answer { font-family: 'Lora', serif; font-size: 16px; padding: 12px 18px; border: 2px solid var(--border); border-radius: 8px; outline: none; width: 100%; max-width: 350px; transition: border-color 0.2s; }
+  .input-answer:focus { border-color: var(--primary); }
+
+  .options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+  .option-btn { font-family: 'Lora', serif; font-size: 16px; text-align: left; padding: 12px 18px; background: #fff; border: 2px solid var(--border); border-radius: 8px; cursor: pointer; transition: all 0.2s; color: var(--text-main); }
+  .option-btn:hover { border-color: var(--primary); background: #F9FBFC; }
+  .option-btn.selected { border-color: var(--primary); background: var(--theory-bg); }
+  .option-btn.correct { border-color: var(--success); background: #EBF7EB; }
+  .option-btn.incorrect { border-color: var(--error); background: #FDEDED; }
+  .option-btn:disabled { cursor: default; }
+
+  .btn { font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 600; padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+  .btn-primary { background: var(--primary); color: #fff; }
+  .btn-primary:hover { background: var(--primary-dark); }
+  .btn-hardcore { background: var(--hardcore); color: #fff; }
+  .btn-hardcore:hover { background: #7B1FA2; }
+  .btn-solution { background: #fff; color: var(--text-muted); border: 2px solid var(--border); }
+  .btn-solution:hover { background: #F4F6F8; color: var(--text-main); border-color: #B3BAC1; }
+
+  .feedback { margin-top: 16px; padding: 12px 16px; border-radius: 8px; font-family: 'Montserrat', sans-serif; font-size: 15px; display: none; }
+  .feedback.show { display: block; }
+  .feedback.success { background: #EBF7EB; color: #2E7D32; border-left: 4px solid var(--success); }
+  .feedback.error { background: #FDEDED; color: #C62828; border-left: 4px solid var(--error); }
+
+  .solution-panel { display: none; margin-top: 16px; padding: 16px 20px; background: var(--solution-bg); border: 1px dashed #B3BAC1; border-radius: 8px; font-size: 15px; line-height: 1.6; }
+  .solution-panel.show { display: block; }
+  
+  .answer { display: none; background: var(--teacher-pink); border-left: 5px solid var(--teacher-pink-border); padding: 12px 16px; border-radius: 0 8px 8px 0; margin-top: 16px; font-size: 15px; color: #880E4F; }
+  body.teacher-mode .answer { display: block; }
+
+  /* Диктант */
+  .dictation-box { background: #FFF8E1; border: 2px dashed #FFB300; border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+  .dictation-box h3 { color: #F57F17; margin-bottom: 10px; font-family: 'Montserrat', sans-serif; }
+  .dictation-text { font-style: italic; line-height: 2; font-size: 17px; margin-bottom: 15px; }
+
+  /* 7 класс (Hardcore) */
+  .hardcore-container { background: var(--hardcore-bg); border: 2px solid var(--hardcore); border-radius: 16px; padding: 20px; margin: 20px 0; }
+  .hardcore-title { font-family: 'Montserrat', sans-serif; font-size: 18px; font-weight: 700; color: var(--hardcore); margin-bottom: 15px; text-align: center; }
+
+  /* Зачёт */
+  .test-header { display: flex; justify-content: space-between; align-items: center; background: var(--theory-bg); padding: 15px 20px; border-radius: 12px; margin-bottom: 20px; }
+  .test-progress { font-family: 'Montserrat', sans-serif; font-size: 15px; font-weight: 600; color: var(--primary); }
+  .test-tries { font-family: 'Montserrat', sans-serif; font-size: 14px; color: var(--text-muted); }
+  .test-result { text-align: center; padding: 40px 20px; }
+  .test-result h2 { font-family: 'Montserrat', sans-serif; font-size: 24px; color: var(--primary); margin-bottom: 15px; }
+
+  @media (max-width: 768px) { 
+    .container { margin: 0; border-radius: 0; } .lesson-content { padding: 15px; }
+    .top-bar { padding: 15px 20px; flex-direction: column; gap: 10px; align-items: flex-start; } 
+    .stats { flex-wrap: wrap; }
+    .input-row { flex-direction: column; align-items: stretch; }
+    .btn { width: 100%; }
+    table { font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top-bar">
+  <div class="brand">Северное Сияние <span>· Русский язык</span></div>
+  <div class="header-right">
+    <a href="../index.html" class="back-link">&larr; К списку уроков</a>
+    <div class="stats">
+      <div class="stat-item">✅ Верно: <strong id="score">0</strong></div>
+      <div class="stat-item">📝 Попыток: <strong id="attempts">0</strong></div>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <div class="tabs-nav" id="tabs-nav">
+    <button class="tab-btn active" onclick="switchTab(0)">1. Что такое КС?</button>
+    <button class="tab-btn" onclick="switchTab(1)">2. Отличие от наречий</button>
+    <button class="tab-btn" onclick="switchTab(2)">3. Сложные случаи</button>
+    <button class="tab-btn hardcore-tab" onclick="switchTab(3)">7 класс ⭐</button>
+    <button class="tab-btn" onclick="switchTab(4)">Диктанты 📝</button>
+    <button class="tab-btn" onclick="switchTab(5)" style="color:#D84315;">Зачёт 🏆</button>
+  </div>
+
+  <div class="lesson-content">
+    
+    <!-- ВКЛАДКА 1 -->
+    <div class="tab-content active" id="tab-0">
+      <div class="theory">
+        <div class="block-label">Теория</div>
+        <strong>Категория состояния</strong> — это самостоятельная часть речи, которая обозначает <strong>состояние</strong> природы, человека или среды. Отвечает на вопросы <em>«каково?»</em> или <em>«как?»</em>.<br><br>
+        <strong>Главные признаки:</strong>
+        <ul>
+          <li>Не изменяется (нет рода, числа, падежа).</li>
+          <li>В предложении является <strong>сказуемым</strong>.</li>
+          <li>Употребляется в <strong>безличных предложениях</strong> (нет и не может быть подлежащего).</li>
+        </ul>
+      </div>
+      <div class="example">
+        <div class="block-label">Пример</div>
+        <em>В комнате было <strong>душно</strong> и <strong>тихо</strong>.</em> (Состояние среды, подлежащего нет).<br>
+        <em>Мне <strong>грустно</strong>.</em> (Состояние человека, подлежащего нет).
+      </div>
+
+      <div class="task-block">
+        <div class="task-question">Задача 1. Выпишите предложения, в которых есть слова категории состояния. (Введите номера через запятую, например: 1, 3).<br><br>
+          1) В горнице моей светло.<br>
+          2) Она светло улыбнулась.<br>
+          3) Мне стало грустно отчего-то.<br>
+          4) Грустно и загадочно звучала музыка.
+        </div>
+        <div class="input-row">
+          <input type="text" class="input-answer" id="in-0-0" placeholder="Номера предложений">
+          <button class="btn btn-primary" onclick="checkAns('0-0', '1,3')">Проверить</button>
+          <button class="btn btn-solution" onclick="toggleSol('0-0')">Решение</button>
+        </div>
+        <div class="feedback" id="fb-0-0"></div>
+        <div class="solution-panel" id="sol-0-0">1) «Светло» — КС (нет подлежащего, состояние среды). 3) «Грустно» — КС (состояние человека).<br>2) и 4) — наречия, так как относятся к глаголам («улыбнулась», «звучала»).</div>
+        <div class="answer"><strong>Ответ:</strong> 1, 3.</div>
+      </div>
+    </div>
+
+    <!-- ВКЛАДКА 2 -->
+    <div class="tab-content" id="tab-1">
+      <div class="theory">
+        <div class="block-label">Теория</div>
+        Это самое сложное в теме, так как слова звучат одинаково. Главное отличие — в <strong>синтаксической роли</strong> и <strong>вопросе</strong>:
+        <table>
+          <tr><th>Часть речи</th><th>Вопрос</th><th>К чему относится</th><th>Роль в предложении</th></tr>
+          <tr><td>Наречие</td><td>Как?</td><td>К глаголу</td><td>Обстоятельство</td></tr>
+          <tr><td>Краткое прил.</td><td>Каково?</td><td>К существительному</td><td>Сказуемое (есть подлежащее!)</td></tr>
+          <tr><td>Категория сост.</td><td>Каково?</td><td>Ни к чему (безлично)</td><td>Сказуемое (нет подлежащего!)</td></tr>
+        </table>
+      </div>
+      <div class="example">
+        <div class="block-label">Пример</div>
+        Он <strong>весело</strong> засмеялся. (Наречие: как? — обстоятельство).<br>
+        Лицо его было <strong>весело</strong>. (Краткое прил.: каково? — сказуемое при подлежащем «лицо»).<br>
+        Ему было <strong>весело</strong>. (КС: каково? — сказуемое, подлежащего нет).
+      </div>
+
+      <div class="task-block">
+        <div class="task-question">Задача 2. В каком предложении слово «тихо» является категорией состояния?</div>
+        <div class="options" id="q-1-0">
+          <button class="option-btn" onclick="selectOpt('1-0', this, 'A')">А) Море сегодня тихо.</button>
+          <button class="option-btn" onclick="selectOpt('1-0', this, 'B')">Б) Утро тихо и спокойно.</button>
+          <button class="option-btn" onclick="selectOpt('1-0', this, 'C')">В) В лесу тихо.</button>
+        </div>
+        <button class="btn btn-primary" onclick="checkOpt('1-0', 'C')">Проверить</button>
+        <div class="feedback" id="fb-1-0"></div>
+        <div class="answer"><strong>Ответ:</strong> В. (Нет подлежащего, состояние природы. В А и Б есть подлежащие «море» и «утро»).</div>
+      </div>
+    </div>
+
+    <!-- ВКЛАДКА 3 -->
+    <div class="tab-content" id="tab-2">
+      <div class="theory">
+        <div class="block-label">Теория</div>
+        Некоторые слова могут быть и глаголами, и словами категории состояния. Например, «<strong>светает</strong>», «<strong>знобит</strong>», «<strong>пахнет</strong>». 
+      </div>
+
+      <div class="task-block">
+        <div class="task-question">Задача 3. В каком предложении слово «нельзя» является категорией состояния?</div>
+        <div class="options" id="q-2-0">
+          <button class="option-btn" onclick="selectOpt('2-0', this, 'A')">А) Нельзя шуметь в библиотеке.</button>
+          <button class="option-btn" onclick="selectOpt('2-0', this, 'B')">Б) Он сказал, что нельзя опаздывать.</button>
+          <button class="option-btn" onclick="selectOpt('2-0', this, 'C')">В) Мне нельзя есть сладкое.</button>
+        </div>
+        <button class="btn btn-primary" onclick="checkOpt('2-0', 'A')">Проверить</button>
+        <div class="feedback" id="fb-2-0"></div>
+        <div class="answer"><strong>Ответ:</strong> А. (Безличное предложение, выражает состояние невозможности).</div>
+      </div>
+    </div>
+
+    <!-- ВКЛАДКА 4: 7 КЛАСС -->
+    <div class="tab-content" id="tab-3">
+      <div class="hardcore-container">
+        <div class="hardcore-title">⭐ Задания повышенной сложности (7 класс)</div>
+        <p style="margin-bottom: 15px; text-align: center;">Здесь мы работаем с многозначными словами, сравнительной степенью и сложными синтаксическими конструкциями.</p>
+
+        <div class="task-block" style="border-color: var(--hardcore);">
+          <div class="task-question">Задача 1. Определите часть речи выделенного слова: <em>«С каждым днём становится <strong>прохладнее</strong>»</em>.</div>
+          <div class="options" id="q-3-0">
+            <button class="option-btn" onclick="selectOpt('3-0', this, 'A')">А) Наречие</button>
+            <button class="option-btn" onclick="selectOpt('3-0', this, 'B')">Б) Краткое прилагательное</button>
+            <button class="option-btn" onclick="selectOpt('3-0', this, 'C')">В) Категория состояния</button>
+          </div>
+          <button class="btn btn-hardcore" onclick="checkOpt('3-0', 'C')">Проверить</button>
+          <div class="feedback" id="fb-3-0"></div>
+          <div class="answer"><strong>Ответ:</strong> В. (Это безличное предложение, слово в сравнительной степени является сказуемым и обозначает состояние природы).</div>
+        </div>
+
+        <div class="task-block" style="border-color: var(--hardcore);">
+          <div class="task-question">Задача 2. Выпишите грамматическую основу предложения: <em>«Мне было очень скучно слушать этот рассказ»</em>.</div>
+          <div class="input-row">
+            <input type="text" class="input-answer" id="in-3-1" placeholder="Введите основу">
+            <button class="btn btn-hardcore" onclick="checkAns('3-1', 'было скучно')">Проверить</button>
+            <button class="btn btn-solution" onclick="toggleSol('3-1')">Решение</button>
+          </div>
+          <div class="feedback" id="fb-3-1"></div>
+          <div class="solution-panel" id="sol-3-1">В безличном предложении нет подлежащего. Сказуемое выражено категорией состояния с глаголом-связкой: «было скучно».</div>
+          <div class="answer"><strong>Ответ:</strong> было скучно.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ВКЛАДКА 5: ДИКТАНТЫ -->
+    <div class="tab-content" id="tab-4">
+      <div class="dictation-box">
+        <h3>Словарный диктант</h3>
+        <p style="margin-bottom: 15px;">Запишите слова в тетрадь в два столбика: 1) наречия, 2) слова категории состояния.</p>
+        <p class="dictation-text">Тихо, холодно, радостно, светло, темно, душно, грустно, весело, скучно, тревожно.</p>
+      </div>
+
+      <div class="dictation-box">
+        <h3>Текстовый диктант (осложнённое списывание)</h3>
+        <p style="margin-bottom: 15px;"><strong>Задание:</strong> спишите текст в тетрадь, вставляя пропущенные буквы и знаки препинания. Подчеркните грамматические основы. Над словами категории состояния надпишите «КС».</p>
+        <p class="dictation-text">
+          Утро было прохладное но к обеду на улице стало (по)летнему тепло. В лесу было тихо и торжественно. Мне стало немного грустно от этой тишины но на душе всё равно было светло. Ребята весело бежали по тропинке а я шёл медленно и смотрел вокруг. Хорошо в родном краю!
+        </p>
+      </div>
+      
+      <div class="answer" style="display:block; background:#E8F5E9; border-left-color:#4CAF50; color:#2E7D32;">
+        <strong>Для наставника (ответ к тексту):</strong> Слова «тепло» (стало тепло), «тихо», «торжественно» (было тихо), «грустно» (стало грустно), «светло» (было светло), «хорошо» (хорошо в родном краю) — категория состояния. «Весело» (бежали весело) — наречие. «Медленно» (шёл медленно) — наречие.
+      </div>
+
+      <div class="theory" style="margin-top: 30px; background: #FFF3E0; border-color: #FF9800; text-align: center;">
+        <strong>Сфотографируйте классную работу в тетради по русскому языку и загрузите фото на платформу Взнание вместе с выполнением самостоятельной работы.</strong>
+      </div>
+    </div>
+
+    <!-- ВКЛАДКА 6: ЗАЧЁТ -->
+    <div class="tab-content" id="tab-5">
+      <div id="test-start-view" style="text-align: center; padding: 40px 20px;">
+        <h2 style="font-family:'Montserrat'; color:var(--primary); margin-bottom:15px;">Зачёт по теме</h2>
+        <p style="margin-bottom:20px; color:#666;">5 вопросов из базы. На каждый дается 2 попытки.</p>
+        <button class="btn btn-primary" onclick="startQuiz()" style="font-size: 18px; padding: 15px 40px;">Начать зачёт</button>
+      </div>
+      <div id="test-question-view" style="display: none;">
+        <div class="test-header">
+          <div class="test-progress" id="test-progress">Вопрос 1 из 5</div>
+          <div class="test-tries" id="test-tries">Попыток: 2</div>
+        </div>
+        <div class="task-block" style="min-height: 200px;">
+          <div class="task-question" id="test-q" style="font-size: 18px; margin-bottom: 20px;"></div>
+          <div class="input-row">
+            <input type="text" class="input-answer" id="test-in" placeholder="Введите ответ (слово или номер)">
+            <button class="btn btn-primary" onclick="checkQuizAns()" id="test-btn-check">Ответить</button>
+          </div>
+          <div class="feedback" id="fb-test"></div>
+          <div id="test-next-wrap" style="display: none; margin-top: 20px;">
+            <button class="btn btn-primary" onclick="nextQuizQuestion()" style="width: 100%;">Следующий вопрос &rarr;</button>
+          </div>
+          <div class="solution-panel" id="sol-test"></div>
+        </div>
+      </div>
+      <div id="test-result-view" style="display: none;" class="test-result">
+        <h2>Зачёт завершен!</h2>
+        <p style="font-size: 20px; margin-bottom: 20px;">Ваш результат: <strong id="test-score" style="color: var(--success); font-size: 28px;"></strong> из 5</p>
+        <button class="btn btn-primary" onclick="startQuiz()">Пройти ещё раз</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  if (window.location.search.includes('mode=teacher')) document.body.classList.add('teacher-mode');
+
+  let score = 0, attempts = 0;
+  let selectedOpts = {};
+
+  function switchTab(index) {
+    document.querySelectorAll('.tab-btn').forEach((btn, i) => btn.classList.toggle('active', i === index));
+    document.querySelectorAll('.tab-content').forEach((el, i) => el.classList.toggle('active', i === index));
+  }
+
+  // Проверка текстовых ответов
+  function checkAns(id, correctStr) {
+    const input = document.getElementById('in-' + id);
+    const fb = document.getElementById('fb-' + id);
+    const userStr = input.value.trim().toLowerCase().replace(/\s+/g, '');
+    
+    if (!userStr) return;
+    attempts++;
+
+    // Очищаем от пробелов и запятых для нестрогого сравнения, но учитываем запятые в списках
+    const normalizedUser = userStr.replace(/,/g, '');
+    const normalizedCorrect = correctStr.toLowerCase().replace(/\s+/g, '').replace(/,/g, '');
+
+    if (normalizedUser === normalizedCorrect || normalizedUser === normalizedCorrect.replace(/[^а-я0-9]/g, '')) {
+      score++;
+      fb.className = 'feedback show success';
+      fb.innerHTML = '✅ <strong>Верно!</strong>';
+    } else {
+      fb.className = 'feedback show error';
+      fb.innerHTML = '❌ <strong>Не совсем.</strong> Проверьте ответ.';
+    }
+
+    document.getElementById('score').textContent = score;
+    document.getElementById('attempts').textContent = attempts;
+  }
+
+  function toggleSol(id) {
+    document.getElementById('sol-' + id).classList.toggle('show');
+  }
+
+  // Проверка выбора варианта
+  function selectOpt(qId, btn, val) {
+    if (document.body.classList.contains('teacher-mode')) return;
+    const parent = document.getElementById('q-' + qId);
+    parent.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedOpts[qId] = val;
+  }
+
+  function checkOpt(qId, correctVal) {
+    const userVal = selectedOpts[qId];
+    if (!userVal) return;
+
+    attempts++;
+    const fb = document.getElementById('fb-' + qId);
+    const parent = document.getElementById('q-' + qId);
+    
+    parent.querySelectorAll('.option-btn').forEach(b => {
+      b.disabled = true;
+      if (b.textContent.trim().startsWith(correctVal + ')')) b.classList.add('correct');
+      else if (b.textContent.trim().startsWith(userVal + ')')) b.classList.add('incorrect');
+    });
+
+    if (userVal === correctVal) {
+      score++;
+      fb.className = 'feedback show success';
+      fb.innerHTML = '✅ <strong>Верно!</strong>';
+    } else {
+      fb.className = 'feedback show error';
+      fb.innerHTML = '❌ <strong>Не совсем.</strong> Вспомните про подлежащее!';
+    }
+
+    document.getElementById('score').textContent = score;
+    document.getElementById('attempts').textContent = attempts;
+  }
+
+  // === ЛОГИКА ЗАЧЁТА ===
+  const quizPool = [
+    { q: "Какое утверждение о категории состояния верно? (Введите номер)\n1) Изменяется по родам и числам.\n2) В предложении является подлежащим.\n3) Обозначает состояние и не изменяется.", a: "3" },
+    { q: "В каком предложении выделенное слово — категория состояния? (Введите номер)\n1) Он весело посмотрел вокруг.\n2) Ему было весело.\n3) Лицо его было весело.", a: "2" },
+    { q: "Найдите предложение с категорией состояния. (Введите номер)\n1) Летом темнеет рано.\n2) В лесу было тихо.\n3) Он тихо закрыл дверь.", a: "2" },
+    { q: "Определите синтаксическую роль слова «холодно» в предложении: «На улице стало холодно».\n(Введите ответ одним словом)", a: "сказуемое" },
+    { q: "В каком предложении слово «можно» является категорией состояния? (Введите номер)\n1) Эту книгу можно прочитать за вечер.\n2) Можно мне войти?\n3) Здесь можно шуметь.", a: "2" }
+  ];
+
+  let quizState = { qs: [], idx: 0, score: 0, tries: 0, currentQ: null };
+
+  function startQuiz() {
+    let shuffled = [...quizPool].sort(() => 0.5 - Math.random());
+    quizState.qs = shuffled.slice(0, 5);
+    quizState.idx = 0; quizState.score = 0;
+    document.getElementById('test-start-view').style.display = 'none';
+    document.getElementById('test-result-view').style.display = 'none';
+    document.getElementById('test-question-view').style.display = 'block';
+    loadQuizQuestion();
+  }
+
+  function loadQuizQuestion() {
+    quizState.tries = 0;
+    quizState.currentQ = quizState.qs[quizState.idx];
+    document.getElementById('test-progress').innerText = `Вопрос ${quizState.idx + 1} из 5`;
+    document.getElementById('test-tries').innerText = `Попыток: 2`;
+    document.getElementById('test-q').innerText = quizState.currentQ.q;
+    document.getElementById('test-in').value = '';
+    document.getElementById('test-in').disabled = false;
+    document.getElementById('fb-test').className = 'feedback';
+    document.getElementById('sol-test').classList.remove('show');
+    document.getElementById('test-next-wrap').style.display = 'none';
+    document.getElementById('test-btn-check').style.display = 'inline-block';
+    document.getElementById('test-btn-check').innerText = 'Ответить';
+  }
+
+  function checkQuizAns() {
+    const input = document.getElementById('test-in');
+    const fb = document.getElementById('fb-test');
+    const userStr = input.value.trim().toLowerCase();
+    if (!userStr) return;
+    quizState.tries++;
+    
+    // В режиме учителя показываем ответ сразу
+    if (document.body.classList.contains('teacher-mode')) {
+        fb.className = 'feedback show success';
+        fb.innerHTML = `Ответ: ${quizState.currentQ.a}`;
+        finishQuizQuestion();
+        return;
+    }
+
+    let isCorrect = false;
+    // Нестрогая проверка
+    if (userStr.replace(/[^а-я0-9]/g, '') === quizState.currentQ.a.toLowerCase().replace(/[^а-я0-9]/g, '')) {
+        isCorrect = true;
+    }
+
+    if (isCorrect) {
+      quizState.score++; score++;
+      fb.className = 'feedback show success';
+      fb.innerHTML = '✅ <strong>Верно!</strong>';
+      finishQuizQuestion();
+    } else {
+      if (quizState.tries >= 2) {
+        fb.className = 'feedback show error';
+        fb.innerHTML = '❌ <strong>Попытки закончились.</strong> Правильный ответ показан ниже.';
+        document.getElementById('sol-test').innerHTML = `<strong>Правильный ответ:</strong> ${quizState.currentQ.a}`;
+        document.getElementById('sol-test').classList.add('show');
+        finishQuizQuestion();
+      } else {
+        quizState.tries--;
+        fb.className = 'feedback show error';
+        fb.innerHTML = `❌ <strong>Не совсем.</strong> У вас осталась <strong>1 попытка</strong>.`;
+        document.getElementById('test-tries').innerText = `Попыток: 1`;
+        input.value = '';
+        quizState.tries++;
+      }
+    }
+    document.getElementById('score').textContent = score;
+    document.getElementById('attempts').textContent = quizState.idx + 1;
+  }
+
+  function finishQuizQuestion() {
+    document.getElementById('test-in').disabled = true;
+    document.getElementById('test-btn-check').style.display = 'none';
+    document.getElementById('test-next-wrap').style.display = 'block';
+    if (quizState.idx === 4) document.querySelector('#test-next-wrap .btn').innerText = 'Завершить зачёт';
+  }
+
+  function nextQuizQuestion() {
+    quizState.idx++;
+    if (quizState.idx >= 5) {
+      document.getElementById('test-question-view').style.display = 'none';
+      document.getElementById('test-result-view').style.display = 'block';
+      document.getElementById('test-score').innerText = `${quizState.score} / 5`;
+    } else {
+      loadQuizQuestion();
+    }
+  }
+</script>
+
+</body>
+</html>
