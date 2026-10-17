@@ -27,31 +27,23 @@
     margin-bottom: 20px; 
   }
 
-  /* Подзаголовки (для классов) */
-  .sub-title {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 16px;
-    font-weight: 600;
-    color: #6B7785;
-    margin: 25px 0 15px 0;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  .sub-title.hardcore {
-    color: #8E24AA;
-  }
-
-  /* Карточка урока */
+  /* Карточка урока (база) */
   .lesson-card { 
     background: #fff; border-radius: 12px; padding: 20px; margin-bottom: 15px; 
     box-shadow: 0 2px 10px rgba(0,0,0,0.03); display: flex; justify-content: space-between; 
     align-items: center; text-decoration: none; color: inherit; transition: transform 0.2s, box-shadow 0.2s; 
-    border-left: 4px solid transparent;
+    border: 1px solid transparent;
   }
   .lesson-card:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
   
-  /* Фиолетовая полоска для 7 класса */
-  .lesson-card.hardcore-card { border-left-color: #8E24AA; }
+  /* Карточка для 7 класса (выделяется фиолетовым) */
+  .lesson-card.hardcore-card { 
+    border-left: 4px solid #8E24AA; 
+    background: #FCFAFF;
+  }
+  .lesson-card.hardcore-card:hover {
+    box-shadow: 0 4px 15px rgba(142, 36, 170, 0.1);
+  }
 
   .lesson-info { flex: 1; }
   
@@ -85,13 +77,32 @@
   }
   .lesson-card:hover .btn-go { background: #E0F0F7; }
 
-  /* Кнопка для 7 класса */
   .hardcore-card .btn-go {
     color: #8E24AA;
     background: #F6F2FA;
   }
   .hardcore-card:hover .btn-go {
     background: #EDE7F6;
+  }
+
+  /* Разделитель внутри блока предмета */
+  .grade-divider {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #8E24AA;
+    margin: 30px 0 15px 0;
+    display: flex;
+    align-items: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .grade-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #E1BEE7;
+    margin-left: 15px;
   }
 </style>
 </head>
@@ -107,10 +118,10 @@
     <div class="subject-section">
       <div class="subject-title">Русский язык</div>
       
-      <div class="sub-title">6–7 класс (база)</div>
+      <!-- 6-7 класс -->
       <a href="lessons/russian-19-10-narechie.html" class="lesson-card">
         <div class="lesson-info">
-          <div class="lesson-date">19 октября</div>
+          <div class="lesson-date">19 октября · 6–7 класс</div>
           <div class="lesson-name">Наречие: разряды, правописание, тренажер</div>
         </div>
         <div class="btn-go">Открыть</div>
@@ -121,10 +132,10 @@
     <div class="subject-section">
       <div class="subject-title">История</div>
       
-      <div class="sub-title">6–7 класс (база)</div>
+      <!-- 6-7 класс -->
       <a href="lessons/history-19-10-ancient-india.html" class="lesson-card">
         <div class="lesson-info">
-          <div class="lesson-date">19 октября</div>
+          <div class="lesson-date">19 октября · 6–7 класс</div>
           <div class="lesson-name">Древняя Индия: природа и люди</div>
         </div>
         <div class="btn-go">Открыть</div>
@@ -135,10 +146,10 @@
     <div class="subject-section">
       <div class="subject-title">Математика · Алгебра</div>
       
-      <div class="sub-title">6–7 класс (база)</div>
+      <!-- 6-7 класс -->
       <a href="lessons/algebra-19-10-zadachi-na-drobi.html" class="lesson-card">
         <div class="lesson-info">
-          <div class="lesson-date">19 октября</div>
+          <div class="lesson-date">19 октября · 6–7 класс</div>
           <div class="lesson-name">Задачник: текстовые задачи на дроби</div>
         </div>
         <div class="btn-go">Открыть</div>
@@ -146,18 +157,18 @@
 
       <a href="lessons/trainer-drobi.html" class="lesson-card">
         <div class="lesson-info">
-          <div class="lesson-date">Интерактивный тренажёр</div>
+          <div class="lesson-date">Интерактивный тренажёр · 6–7 класс</div>
           <div class="lesson-name">Обыкновенные дроби: от разложения до умножения</div>
         </div>
         <div class="btn-go">Открыть</div>
       </a>
 
-      <!-- Блок 7 класса -->
-      <div class="sub-title hardcore">7 класс · Углубление</div>
+      <!-- 7 класс (отдельно) -->
+      <div class="grade-divider">7 класс · Углубление</div>
       
       <a href="lessons/algebra-19-10-uravneniya-drobi-7klass.html" class="lesson-card hardcore-card">
         <div class="lesson-info">
-          <div class="lesson-date">19 октября · 12:45</div>
+          <div class="lesson-date">19 октября · 7 класс</div>
           <div class="lesson-name">Дроби в уравнениях и алгебраических выражениях</div>
         </div>
         <div class="btn-go">Открыть</div>
