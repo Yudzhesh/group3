@@ -3,56 +3,698 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Северное Сияние · Кампус</title>
+<title>Тренажёр: дроби · Северное Сияние</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  body { font-family: 'Lora', serif; background: #F4F6F8; color: #2C3338; margin: 0; padding: 0; line-height: 1.6; display: flex; flex-direction: column; min-height: 100vh; }
-  .header { background: #1AA6C4; color: #fff; padding: 20px 30px; box-shadow: 0 2px 10px rgba(26, 166, 196, 0.2); }
-  .brand { font-family: 'Montserrat', sans-serif; font-size: 22px; font-weight: 700; }
-  .brand span { font-weight: 400; opacity: 0.8; }
-  
-  .container { max-width: 800px; margin: 60px auto; padding: 0 20px; flex: 1; text-align: center; }
-  h1 { font-family: 'Montserrat', sans-serif; font-size: 32px; margin-bottom: 40px; color: #1A2024; }
-  
-  .groups-grid { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
-  
-  .group-card { 
-    background: #fff; border-radius: 16px; padding: 40px 30px; width: 300px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.05); text-decoration: none; color: inherit;
-    transition: transform 0.2s, box-shadow 0.2s; border: 2px solid transparent;
+  :root {
+    --primary: #1AA6C4; --primary-dark: #158AA3; --bg-body: #F4F6F8; --bg-card: #FFFFFF;
+    --text-main: #2C3338; --text-muted: #6B7785; --border: #E4E8EB;
+    --theory-bg: #F0F7FA; --theory-border: #1AA6C4; --example-bg: #F4F9F0; --example-border: #7A9A6A;
+    --gold-bg: #FFF9E6; --gold-border: #F5B301; --success: #4CAF50; --error: #E53935;
+    --teacher-pink: #FDF2F8; --teacher-pink-border: #D81B60; --solution-bg: #F8F9FA;
+    --level-1: #2196F3; --level-2: #8E24AA; --level-3: #F5B301;
   }
-  .group-card:hover { transform: translateY(-5px); box-shadow: 0 8px 30px rgba(26, 166, 196, 0.15); border-color: #1AA6C4; }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
   
-  .group-icon { font-size: 48px; margin-bottom: 20px; }
-  .group-name { font-family: 'Montserrat', sans-serif; font-size: 22px; font-weight: 700; color: #1AA6C4; margin-bottom: 10px; }
-  .group-desc { font-size: 15px; color: #6B7785; }
+  body { font-family: 'Lora', Georgia, serif; background: var(--bg-body); color: var(--text-main); line-height: 1.75; font-size: 17px; padding-bottom: 50px; }
+
+  .top-bar { background: var(--primary); color: #fff; padding: 16px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(26, 166, 196, 0.2); position: sticky; top: 0; z-index: 100; }
+  .brand { font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 700; }
+  .brand span { font-weight: 400; opacity: 0.8; }
+  .header-right { display: flex; align-items: center; gap: 20px; }
+  .back-link { font-family: 'Montserrat', sans-serif; font-size: 14px; color: #fff; text-decoration: none; font-weight: 500; opacity: 0.8; transition: opacity 0.2s; }
+  .back-link:hover { opacity: 1; }
+  .stats { display: flex; gap: 12px; font-family: 'Montserrat', sans-serif; font-size: 14px; }
+  .stat-item { background: rgba(255, 255, 255, 0.15); padding: 6px 14px; border-radius: 20px; }
+
+  .container { max-width: 900px; margin: 30px auto; background: var(--bg-card); border-radius: 16px; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05); overflow: hidden; }
+
+  .tabs-nav { display: flex; flex-wrap: wrap; justify-content: center; background: #F9FBFC; border-bottom: 1px solid var(--border); padding: 0 10px; }
+  .tab-btn { font-family: 'Montserrat', sans-serif; background: transparent; border: none; padding: 15px 12px; font-size: 14px; font-weight: 600; color: var(--text-muted); cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s; white-space: nowrap; }
+  .tab-btn:hover { color: var(--primary); }
+  .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+  .lesson-content { padding: 30px; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ВИЗУАЛИЗАЦИИ */
+  .visual-container { background: #fff; border: 1px solid #EAEAEA; border-radius: 16px; padding: 20px; margin: 20px 0; min-height: 220px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; box-shadow: inset 0 2px 10px rgba(0,0,0,0.02); }
+  .visual-title { font-family: 'Montserrat', sans-serif; font-size: 12px; color: #888; font-weight: 600; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }
+
+  /* Дерево */
+  .svg-tree { width: 100%; max-width: 400px; height: 220px; }
+  .tree-line { stroke: #B0BEC5; stroke-width: 2; fill: none; stroke-dasharray: 100; stroke-dashoffset: 100; animation: drawTree 8s infinite; }
+  .tree-circle { fill: #fff; stroke: #1AA6C4; stroke-width: 2; transform-origin: center; animation: popNode 8s infinite; }
+  .tree-circle.prime { stroke: #4CAF50; stroke-width: 3; fill: #E8F5E9; }
+  .tree-text { font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 700; fill: #1A2024; text-anchor: middle; dominant-baseline: central; animation: popNode 8s infinite; }
+  .tree-text.prime { fill: #2E7D32; }
+  @keyframes drawTree { 0% { stroke-dashoffset: 100; } 20% { stroke-dashoffset: 0; } 80% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 0; } }
+  @keyframes popNode { 0% { transform: scale(0); opacity: 0; } 20% { transform: scale(1); opacity: 1; } 80% { transform: scale(1); opacity: 1; } 100% { transform: scale(0); opacity: 0; } }
+
+  /* НОД */
+  .gcd-wrap { display: flex; gap: 15px; align-items: center; justify-content: center; margin-top: 15px; }
+  .gcd-box { padding: 12px 20px; border: 2px solid var(--border); border-radius: 10px; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 20px; background: #fff; color: var(--text-muted); }
+  .gcd-box.max { border-color: var(--primary); background: var(--theory-bg); color: var(--primary); transform: scale(1.3); box-shadow: 0 4px 15px rgba(26,166,196,0.2); animation: pulseGcd 2s infinite; }
+  @keyframes pulseGcd { 0%, 100% { transform: scale(1.3); box-shadow: 0 4px 15px rgba(26,166,196,0.2); } 50% { transform: scale(1.4); box-shadow: 0 6px 20px rgba(26,166,196,0.4); } }
+
+  /* НОК */
+  .lcm-wrapper { width: 100%; max-width: 500px; position: relative; margin-top: 10px; }
+  .lcm-grid { display: grid; grid-template-columns: repeat(12, 1fr); width: 100%; position: relative; border-bottom: 2px solid #E0E0E0; padding-bottom: 25px; }
+  .lcm-grid:last-child { border-bottom: none; }
+  .lcm-cell { height: 30px; position: relative; }
+  .lcm-tick { position: absolute; right: 0; bottom: 0; width: 2px; height: 12px; background: #90A4AE; transform: translateX(50%); }
+  .lcm-label { position: absolute; right: 0; bottom: -22px; transform: translateX(50%); font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 600; color: var(--text-muted); white-space: nowrap;}
+  .lcm-tick.meet { background: var(--success); height: 20px; width: 3px; }
+  .lcm-label.meet { color: var(--success); font-weight: 700; font-size: 15px; }
+  .lcm-highlight-bg { position: absolute; right: 0; top: -10px; bottom: -10px; width: calc(100% / 12); background: rgba(76, 175, 80, 0.1); border-left: 2px dashed var(--success); border-right: 2px dashed var(--success); z-index: 0; }
+  .lcm-row-title { font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 600; color: #555; margin-bottom: 5px; margin-top: 15px; }
+  .lcm-row-title:first-child { margin-top: 0; }
+
+  /* Сокращение */
+  .frac-anim-wrap { display: flex; align-items: center; gap: 20px; margin-top: 20px; }
+  .bar-group { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .bar-rect { width: 120px; height: 40px; border: 2px solid #555; border-radius: 6px; display: flex; overflow: hidden; position: relative; }
+  .bar-seg { height: 100%; background: #90CAF9; border-right: 1px solid #555; transition: all 0.5s; }
+  .bar-seg:last-child { border-right: none; }
+  .bar-seg.empty { background: #F5F5F5; }
+  .bar-rect.small .bar-seg { border-right-width: 2px; border-right-color: #1AA6C4; }
+  .bar-rect.small .bar-seg.empty { background: #fff; }
+  .anim-arrow { font-size: 24px; color: #888; animation: slideRight 3s infinite; }
+  @keyframes slideRight { 0%, 100% { transform: translateX(0); opacity: 0.5; } 50% { transform: translateX(10px); opacity: 1; } }
+
+  /* Сложение */
+  .add-wrap { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 400px; align-items: center; margin-top: 10px; }
+  .add-row { display: flex; gap: 10px; align-items: center; font-family: 'Montserrat', sans-serif; font-size: 18px; font-weight: 600; color: #555; }
+  .add-bar { width: 150px; height: 30px; border: 2px solid #555; border-radius: 6px; display: flex; overflow: hidden; position: relative; }
+  .add-seg { height: 100%; border-right: 1px solid #555; transition: all 0.5s; }
+  .add-seg:last-child { border-right: none; }
+  .add-bar.half .add-seg.filled { background: #90CAF9; }
+  .add-bar.half .add-seg.empty { background: #fff; }
+  .add-bar.third .add-seg.filled { background: #FFE082; }
+  .add-bar.third .add-seg.empty { background: #fff; }
+  .add-bar.result .add-seg.f1 { background: #90CAF9; }
+  .add-bar.result .add-seg.f2 { background: #FFE082; }
+  .add-bar.result .add-seg.empty { background: #fff; }
+
+  /* Умножение */
+  .mult-wrap { display: flex; flex-direction: column; align-items: center; margin-top: 10px; }
+  .mult-square { width: 150px; height: 150px; border: 2px solid #555; border-radius: 6px; display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(3, 1fr); position: relative; overflow: hidden; }
+  .mult-cell { border: 1px solid #E0E0E0; background: #fff; transition: background 0.5s; }
+  .mult-square.anim .mult-cell.col { background: #E3F2FD; }
+  .mult-square.anim .mult-cell.row { background: #FFF8E1; }
+  .mult-square.anim .mult-cell.mix { background: #A5D6A7; border-color: #4CAF50; }
+
+  /* Общие блоки */
+  .theory { background: var(--theory-bg); border-left: 4px solid var(--theory-border); border-radius: 0 8px 8px 0; padding: 16px 20px; margin-bottom: 20px; font-size: 16px; }
+  .example { background: var(--example-bg); border-left: 4px solid var(--example-border); border-radius: 0 8px 8px 0; padding: 16px 20px; margin-bottom: 20px; }
+  .block-label { font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 1px; color: var(--text-muted); }
+
+  /* Уровни */
+  .level-switcher { display: flex; gap: 8px; margin-bottom: 24px; background: #F4F6F8; padding: 6px; border-radius: 12px; border: 1px solid var(--border); flex-wrap: wrap; }
+  .level-btn { flex: 1; font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 600; padding: 10px; border: none; border-radius: 8px; background: transparent; color: var(--text-muted); cursor: pointer; transition: all 0.2s; text-align: center; }
+  .level-btn:hover { background: #fff; color: var(--text-main); }
+  .level-btn.active { background: #fff; color: var(--text-main); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+  .level-btn[data-level="1"].active { color: var(--level-1); border-bottom: 3px solid var(--level-1); }
+  .level-btn[data-level="2"].active { color: var(--level-2); border-bottom: 3px solid var(--level-2); }
+  .level-btn[data-level="3"].active { color: #9e7200; background: var(--gold-bg); border-bottom: 3px solid var(--level-3); font-weight: 700; }
+
+  /* Задания */
+  .task-block { margin-bottom: 24px; background: #fff; padding: 24px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 2px 10px rgba(0,0,0,0.02); transition: all 0.3s; }
+  .task-block.level-3-active { border-color: var(--gold-border); box-shadow: 0 4px 15px rgba(245, 179, 1, 0.15); }
+  .task-badge { display: inline-block; font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 700; color: #fff; padding: 4px 10px; border-radius: 12px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .task-badge.l1 { background: var(--level-1); }
+  .task-badge.l2 { background: var(--level-2); }
+  .task-badge.l3 { background: var(--level-3); color: #1A2024; }
+  .task-question { font-family: 'Montserrat', sans-serif; font-size: 18px; font-weight: 600; margin-bottom: 8px; color: #1A2024; }
+  .task-hint { font-size: 14px; color: var(--text-muted); margin-bottom: 16px; font-style: italic; }
+
+  .input-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .input-answer { font-family: 'Lora', serif; font-size: 16px; padding: 12px 18px; border: 2px solid var(--border); border-radius: 8px; outline: none; width: 220px; transition: border-color 0.2s; }
+  .input-answer:focus { border-color: var(--primary); }
+
+  .btn { font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 600; padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+  .btn-primary { background: var(--primary); color: #fff; }
+  .btn-primary:hover { background: var(--primary-dark); }
+  .btn-next { background: #fff; color: var(--primary); border: 2px solid var(--primary); }
+  .btn-next:hover { background: var(--theory-bg); }
+  .btn-solution { background: #fff; color: var(--text-muted); border: 2px solid var(--border); }
+  .btn-solution:hover { background: #F4F6F8; color: var(--text-main); border-color: #B3BAC1; }
+
+  .feedback { margin-top: 16px; padding: 12px 16px; border-radius: 8px; font-family: 'Montserrat', sans-serif; font-size: 15px; display: none; }
+  .feedback.show { display: block; }
+  .feedback.success { background: #EBF7EB; color: #2E7D32; border-left: 4px solid var(--success); }
+  .feedback.error { background: #FDEDED; color: #C62828; border-left: 4px solid var(--error); }
+
+  .solution-panel { display: none; margin-top: 16px; padding: 16px 20px; background: var(--solution-bg); border: 1px dashed #B3BAC1; border-radius: 8px; font-size: 15px; line-height: 1.6; }
+  .solution-panel.show { display: block; }
+  
+  .teacher-answer { display: none; background: var(--teacher-pink); border-left: 5px solid var(--teacher-pink-border); padding: 16px 20px; border-radius: 0 8px 8px 0; margin-top: 16px; font-size: 15px; color: #880E4F; }
+  body.teacher-mode .teacher-answer { display: block; }
+
+  @media (max-width: 768px) { 
+    .container { margin: 0; border-radius: 0; } .lesson-content { padding: 15px; }
+    .input-row { flex-direction: column; align-items: stretch; } .input-answer { width: 100%; }
+    .level-switcher { flex-direction: column; }
+    .frac-anim-wrap { flex-direction: column; }
+    .anim-arrow { transform: rotate(90deg); }
+    .top-bar { padding: 15px 20px; flex-direction: column; gap: 10px; align-items: flex-start; } 
+    .stats { flex-wrap: wrap; }
+  }
 </style>
 </head>
 <body>
-  <div class="header">
-    <div class="brand">Северное Сияние <span>· Кампус</span></div>
-  </div>
-  
-  <div class="container">
-    <h1>Выберите группу</h1>
-    
-    <div class="groups-grid">
-      <!-- Карточка Группы 2 -->
-      <a href="group-2/index.html" class="group-card">
-        <div class="group-icon">📚</div>
-        <div class="group-name">Группа 2</div>
-        <div class="group-desc">Материалы уроков и задания для второй группы.</div>
-      </a>
 
-      <!-- Карточка Группы 3 -->
-      <a href="group-3/index.html" class="group-card">
-        <div class="group-icon">🎓</div>
-        <div class="group-name">Группа 3</div>
-        <div class="group-desc">Тренажеры и материалы для 6–7 классов.</div>
-      </a>
+<header class="top-bar">
+  <div class="brand">Северное Сияние <span>· Тренажёр</span></div>
+  <div class="header-right">
+    <a href="../index.html" class="back-link">&larr; К списку уроков</a>
+    <div class="stats">
+      <div class="stat-item">✅ Верно: <strong id="score">0</strong></div>
+      <div class="stat-item">📝 Попыток: <strong id="attempts">0</strong></div>
+      <div class="stat-item">🔥 Серия: <strong id="streak">0</strong></div>
     </div>
   </div>
+</header>
+
+<div class="container">
+  <div class="tabs-nav" id="tabs-nav">
+    <button class="tab-btn active" onclick="switchTab(0)">1. Разложение</button>
+    <button class="tab-btn" onclick="switchTab(1)">2. НОД и НОК</button>
+    <button class="tab-btn" onclick="switchTab(2)">3. Сокращение</button>
+    <button class="tab-btn" onclick="switchTab(3)">4. Сложение и вычитание</button>
+    <button class="tab-btn" onclick="switchTab(4)">5. Умножение и деление</button>
+  </div>
+
+  <div class="lesson-content">
+    
+    <div class="tab-content active" id="tab-0">
+      <div class="theory">
+        <div class="block-label">Теория</div>
+        Любое составное число можно разложить на простые множители. Продолжаем делить до тех пор, пока не останутся только простые числа (2, 3, 5, 7...).
+      </div>
+      
+      <div class="visual-container">
+        <div class="visual-title">Дерево разложения (пример 24)</div>
+        <svg class="svg-tree" viewBox="0 0 400 240">
+          <path class="tree-line" style="animation-delay: 0s;" d="M200,30 L120,90" />
+          <path class="tree-line" style="animation-delay: 0s;" d="M200,30 L280,90" />
+          <path class="tree-line" style="animation-delay: 1s;" d="M120,90 L60,150" />
+          <path class="tree-line" style="animation-delay: 1s;" d="M120,90 L180,150" />
+          <path class="tree-line" style="animation-delay: 2s;" d="M280,90 L220,150" />
+          <path class="tree-line" style="animation-delay: 2s;" d="M280,90 L340,150" />
+          <g>
+            <circle class="tree-circle" style="animation-delay: 0s;" cx="200" cy="30" r="20" />
+            <text class="tree-text" style="animation-delay: 0s;" x="200" y="30">24</text>
+          </g>
+          <g>
+            <circle class="tree-circle" style="animation-delay: 0.5s;" cx="120" cy="90" r="20" />
+            <text class="tree-text" style="animation-delay: 0.5s;" x="120" y="90">4</text>
+          </g>
+          <g>
+            <circle class="tree-circle" style="animation-delay: 0.5s;" cx="280" cy="90" r="20" />
+            <text class="tree-text" style="animation-delay: 0.5s;" x="280" y="90">6</text>
+          </g>
+          <g>
+            <circle class="tree-circle prime" style="animation-delay: 1.5s;" cx="60" cy="150" r="20" />
+            <text class="tree-text prime" style="animation-delay: 1.5s;" x="60" y="150">2</text>
+          </g>
+          <g>
+            <circle class="tree-circle prime" style="animation-delay: 1.5s;" cx="180" cy="150" r="20" />
+            <text class="tree-text prime" style="animation-delay: 1.5s;" x="180" y="150">2</text>
+          </g>
+          <g>
+            <circle class="tree-circle prime" style="animation-delay: 2.5s;" cx="220" cy="150" r="20" />
+            <text class="tree-text prime" style="animation-delay: 2.5s;" x="220" y="150">2</text>
+          </g>
+          <g>
+            <circle class="tree-circle prime" style="animation-delay: 2.5s;" cx="340" cy="150" r="20" />
+            <text class="tree-text prime" style="animation-delay: 2.5s;" x="340" y="150">3</text>
+          </g>
+        </svg>
+      </div>
+
+      <div class="example">
+        <div class="block-label">Пример</div>
+        24 = 2 · 2 · 2 · 3.
+      </div>
+
+      <div class="level-switcher" id="levels-0">
+        <button class="level-btn active" data-level="1" onclick="setLevel(0, 1)">Базовый</button>
+        <button class="level-btn" data-level="2" onclick="setLevel(0, 2)">Продвинутый</button>
+        <button class="level-btn" data-level="3" onclick="setLevel(0, 3)">⭐ Большие числа</button>
+      </div>
+
+      <div class="task-block" id="task-container-0">
+        <div class="task-badge l1" id="badge-0">Уровень 1</div>
+        <div class="task-question" id="q-0">Загрузка...</div>
+        <div class="task-hint">Введите множители через знак умножить (*). Например: 2*2*3</div>
+        <div class="input-row">
+          <input type="text" class="input-answer" id="input-0" placeholder="Ваш ответ">
+          <button class="btn btn-primary" id="btn-check-0" onclick="checkAnswer(0)">Проверить</button>
+          <button class="btn btn-next" onclick="nextTask(0)">Другая задача &rarr;</button>
+          <button class="btn btn-solution" onclick="toggleSolution(0)">Показать решение</button>
+        </div>
+        <div class="feedback" id="fb-0"></div>
+        <div class="solution-panel" id="sol-0"></div>
+        <div class="teacher-answer" id="ta-0"></div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-1">
+      <div class="theory">
+        <div class="block-label">Теория</div>
+        <strong>НОД</strong> — самый большой общий делитель.<br>
+        <strong>НОК</strong> — самое маленькое общее кратное.
+      </div>
+
+      <div class="visual-container">
+        <div class="visual-title">НОД (12 и 18). Только общие делители</div>
+        <div style="font-family: Montserrat; font-size: 15px; color: #666; margin-bottom: 10px;">Числа, на которые делятся и 12, и 18:</div>
+        <div class="gcd-wrap">
+          <div class="gcd-box">1</div>
+          <div class="gcd-box">2</div>
+          <div class="gcd-box">3</div>
+          <div class="gcd-box max">6</div>
+        </div>
+        <div style="font-family: Montserrat; font-size: 16px; margin-top: 25px; font-weight: 600;">Наибольший из них — <strong style="color: var(--primary); font-size: 20px;">6</strong></div>
+      </div>
+      
+      <div class="visual-container" style="margin-top: 10px;">
+        <div class="visual-title">НОК (4 и 6). Точное совпадение</div>
+        <div class="lcm-wrapper">
+          <div class="lcm-highlight-bg"></div>
+          <div class="lcm-row-title">Кратные 4:</div>
+          <div class="lcm-grid" style="z-index: 1;">
+            <div class="lcm-cell"></div><div class="lcm-cell"></div><div class="lcm-cell"></div>
+            <div class="lcm-cell"><div class="lcm-tick"></div><div class="lcm-label">4</div></div>
+            <div class="lcm-cell"></div><div class="lcm-cell"></div><div class="lcm-cell"></div>
+            <div class="lcm-cell"><div class="lcm-tick"></div><div class="lcm-label">8</div></div>
+            <div class="lcm-cell"></div><div class="lcm-cell"></div><div class="lcm-cell"></div>
+            <div class="lcm-cell"><div class="lcm-tick meet"></div><div class="lcm-label meet">12</div></div>
+          </div>
+          <div class="lcm-row-title">Кратные 6:</div>
+          <div class="lcm-grid" style="z-index: 1;">
+            <div class="lcm-cell"></div><div class="lcm-cell"></div><div class="lcm-cell"></div>
+            <div class="lcm-cell"></div><div class="lcm-cell"></div>
+            <div class="lcm-cell"><div class="lcm-tick"></div><div class="lcm-label">6</div></div>
+            <div class="lcm-cell"></div><div class="lcm-cell"></div><div class="lcm-cell"></div>
+            <div class="lcm-cell"></div><div class="lcm-cell"></div>
+            <div class="lcm-cell"><div class="lcm-tick meet"></div><div class="lcm-label meet">12</div></div>
+          </div>
+        </div>
+        <div style="font-family: Montserrat; font-size: 16px; margin-top: 30px; font-weight: 600;">Они впервые встречаются на <strong style="color: var(--success); font-size: 20px;">12</strong></div>
+      </div>
+
+      <div class="example">
+        <div class="block-label">Пример</div>
+        НОД(12, 18) = 6. НОК(4, 6) = 12.
+      </div>
+
+      <div class="level-switcher" id="levels-1">
+        <button class="level-btn active" data-level="1" onclick="setLevel(1, 1)">Базовый</button>
+        <button class="level-btn" data-level="2" onclick="setLevel(1, 2)">Продвинутый</button>
+        <button class="level-btn" data-level="3" onclick="setLevel(1, 3)">⭐ Большие числа</button>
+      </div>
+
+      <div class="task-block" id="task-container-1">
+        <div class="task-badge l1" id="badge-1">Уровень 1</div>
+        <div class="task-question" id="q-1">Загрузка...</div>
+        <div class="task-hint">Введите только число (например, 12).</div>
+        <div class="input-row">
+          <input type="text" class="input-answer" id="input-1" placeholder="Ваш ответ">
+          <button class="btn btn-primary" id="btn-check-1" onclick="checkAnswer(1)">Проверить</button>
+          <button class="btn btn-next" onclick="nextTask(1)">Другая задача &rarr;</button>
+          <button class="btn btn-solution" onclick="toggleSolution(1)">Показать решение</button>
+        </div>
+        <div class="feedback" id="fb-1"></div>
+        <div class="solution-panel" id="sol-1"></div>
+        <div class="teacher-answer" id="ta-1"></div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-2">
+      <div class="theory">
+        <div class="block-label">Теория</div>
+        Чтобы сократить дробь, нужно разделить числитель и знаменатель на их НОД. Дробь при этом не меняется.
+      </div>
+
+      <div class="visual-container">
+        <div class="visual-title">Сокращение 6/9 → 2/3</div>
+        <div class="frac-anim-wrap">
+          <div class="bar-group">
+            <div class="bar-rect">
+              <div class="bar-seg" style="width: 11.11%;"></div>
+              <div class="bar-seg" style="width: 11.11%;"></div>
+              <div class="bar-seg" style="width: 11.11%;"></div>
+              <div class="bar-seg" style="width: 11.11%;"></div>
+              <div class="bar-seg" style="width: 11.11%;"></div>
+              <div class="bar-seg" style="width: 11.11%;"></div>
+              <div class="bar-seg empty" style="width: 11.11%;"></div>
+              <div class="bar-seg empty" style="width: 11.11%;"></div>
+              <div class="bar-seg empty" style="width: 11.11%;"></div>
+            </div>
+            <div style="font-family: Montserrat; font-weight: bold; font-size: 18px;">6/9</div>
+          </div>
+          <div class="anim-arrow">➡️</div>
+          <div class="bar-group">
+            <div class="bar-rect small">
+              <div class="bar-seg" style="width: 33.33%;"></div>
+              <div class="bar-seg" style="width: 33.33%;"></div>
+              <div class="bar-seg empty" style="width: 33.33%;"></div>
+            </div>
+            <div style="font-family: Montserrat; font-weight: bold; font-size: 18px; color: #4CAF50;">2/3</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="example">
+        <div class="block-label">Пример</div>
+        18/24. НОД = 6. Получаем 3/4.
+      </div>
+
+      <div class="level-switcher" id="levels-2">
+        <button class="level-btn active" data-level="1" onclick="setLevel(2, 1)">Базовый</button>
+        <button class="level-btn" data-level="2" onclick="setLevel(2, 2)">Продвинутый</button>
+        <button class="level-btn" data-level="3" onclick="setLevel(2, 3)">⭐ Большие числа</button>
+      </div>
+
+      <div class="task-block" id="task-container-2">
+        <div class="task-badge l1" id="badge-2">Уровень 1</div>
+        <div class="task-question" id="q-2">Загрузка...</div>
+        <div class="task-hint">Введите дробь в виде 3/4.</div>
+        <div class="input-row">
+          <input type="text" class="input-answer" id="input-2" placeholder="Например, 3/4">
+          <button class="btn btn-primary" id="btn-check-2" onclick="checkAnswer(2)">Проверить</button>
+          <button class="btn btn-next" onclick="nextTask(2)">Другая задача &rarr;</button>
+          <button class="btn btn-solution" onclick="toggleSolution(2)">Показать решение</button>
+        </div>
+        <div class="feedback" id="fb-2"></div>
+        <div class="solution-panel" id="sol-2"></div>
+        <div class="teacher-answer" id="ta-2"></div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-3">
+      <div class="theory">
+        <div class="block-label">Теория</div>
+        Приводим к общему знаменателю и складываем числители. Знаменатель показывает, на сколько частей мы разбили целое.
+      </div>
+
+      <div class="visual-container">
+        <div class="visual-title">1/2 + 1/3 = 5/6</div>
+        <div class="add-wrap">
+          <div class="add-row">
+            <div class="add-bar half">
+              <div class="add-seg filled" style="width: 50%;"></div>
+              <div class="add-seg empty" style="width: 50%;"></div>
+            </div>
+            <span>1/2</span>
+          </div>
+          <div class="add-row">
+            <div class="add-bar third">
+              <div class="add-seg filled" style="width: 33.33%;"></div>
+              <div class="add-seg empty" style="width: 33.33%;"></div>
+              <div class="add-seg empty" style="width: 33.33%;"></div>
+            </div>
+            <span>+ 1/3</span>
+          </div>
+          <div class="add-row" style="margin-top: 10px;">
+            <div class="add-bar result" style="width: 180px; height: 40px;">
+              <div class="add-seg f1" style="width: 16.66%;"></div>
+              <div class="add-seg f1" style="width: 16.66%;"></div>
+              <div class="add-seg f1" style="width: 16.66%;"></div>
+              <div class="add-seg f2" style="width: 16.66%;"></div>
+              <div class="add-seg f2" style="width: 16.66%;"></div>
+              <div class="add-seg empty" style="width: 16.66%;"></div>
+            </div>
+            <span style="font-size: 22px; color: #4CAF50;">= 5/6</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="example">
+        <div class="block-label">Пример</div>
+        1/3 + 1/4 = 4/12 + 3/12 = 7/12.
+      </div>
+
+      <div class="level-switcher" id="levels-3">
+        <button class="level-btn active" data-level="1" onclick="setLevel(3, 1)">Базовый</button>
+        <button class="level-btn" data-level="2" onclick="setLevel(3, 2)">Продвинутый</button>
+        <button class="level-btn" data-level="3" onclick="setLevel(3, 3)">⭐ Большие числа</button>
+      </div>
+
+      <div class="task-block" id="task-container-3">
+        <div class="task-badge l1" id="badge-3">Уровень 1</div>
+        <div class="task-question" id="q-3">Загрузка...</div>
+        <div class="task-hint">Введите дробь в виде 7/12.</div>
+        <div class="input-row">
+          <input type="text" class="input-answer" id="input-3" placeholder="Ваш ответ">
+          <button class="btn btn-primary" id="btn-check-3" onclick="checkAnswer(3)">Проверить</button>
+          <button class="btn btn-next" onclick="nextTask(3)">Другая задача &rarr;</button>
+          <button class="btn btn-solution" onclick="toggleSolution(3)">Показать решение</button>
+        </div>
+        <div class="feedback" id="fb-3"></div>
+        <div class="solution-panel" id="sol-3"></div>
+        <div class="teacher-answer" id="ta-3"></div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-4">
+      <div class="theory">
+        <div class="block-label">Теория</div>
+        <strong>Умножение:</strong> числитель на числитель, знаменатель на знаменатель. Это площадь пересечения.<br>
+        <strong>Деление:</strong> заменяем умножением на обратную дробь.
+      </div>
+
+      <div class="visual-container">
+        <div class="visual-title">Умножение 3/4 · 2/3 = 6/12</div>
+        <div class="mult-wrap">
+          <div class="mult-square anim">
+            <div class="mult-cell col row mix"></div> <div class="mult-cell col row mix"></div> <div class="mult-cell col row mix"></div> <div class="mult-cell row"></div>
+            <div class="mult-cell col row mix"></div> <div class="mult-cell col row mix"></div> <div class="mult-cell col row mix"></div> <div class="mult-cell row"></div>
+            <div class="mult-cell col"></div> <div class="mult-cell col"></div> <div class="mult-cell col"></div> <div class="mult-cell"></div>
+          </div>
+          <div style="margin-top: 15px; font-family: Montserrat; font-size: 14px; color: #666; text-align: center;">
+            Синие колонки = 3/4<br>
+            Желтые строки = 2/3<br>
+            Зеленое пересечение = 6/12 (или 1/2)
+          </div>
+        </div>
+      </div>
+
+      <div class="example">
+        <div class="block-label">Пример</div>
+        2/3 · 3/4 = 6/12 = 1/2.
+      </div>
+
+      <div class="level-switcher" id="levels-4">
+        <button class="level-btn active" data-level="1" onclick="setLevel(4, 1)">Базовый</button>
+        <button class="level-btn" data-level="2" onclick="setLevel(4, 2)">Продвинутый</button>
+        <button class="level-btn" data-level="3" onclick="setLevel(4, 3)">⭐ Большие числа</button>
+      </div>
+
+      <div class="task-block" id="task-container-4">
+        <div class="task-badge l1" id="badge-4">Уровень 1</div>
+        <div class="task-question" id="q-4">Загрузка...</div>
+        <div class="task-hint">Введите дробь в виде 5/6.</div>
+        <div class="input-row">
+          <input type="text" class="input-answer" id="input-4" placeholder="Ваш ответ">
+          <button class="btn btn-primary" id="btn-check-4" onclick="checkAnswer(4)">Проверить</button>
+          <button class="btn btn-next" onclick="nextTask(4)">Другая задача &rarr;</button>
+          <button class="btn btn-solution" onclick="toggleSolution(4)">Показать решение</button>
+        </div>
+        <div class="feedback" id="fb-4"></div>
+        <div class="solution-panel" id="sol-4"></div>
+        <div class="teacher-answer" id="ta-4"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  if (window.location.search.includes('mode=teacher')) document.body.classList.add('teacher-mode');
+
+  let score = 0, attempts = 0, streak = 0;
+  let currentTaskData = {}; 
+  let currentLevels = { 0: 1, 1: 1, 2: 1, 3: 1, 4: 1 };
+
+  const getGCD = (a, b) => b === 0 ? a : getGCD(b, a % b);
+  const getLCM = (a, b) => (a * b) / getGCD(a, b);
+  const simplifyFraction = (num, den) => {
+    let g = getGCD(Math.abs(num), Math.abs(den));
+    num /= g; den /= g;
+    if (den < 0) { num = -num; den = -den; }
+    return den === 1 ? num.toString() : `${num}/${den}`;
+  };
+  const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+  const generators = {
+    0: function(level) {
+      let primes = [2, 3, 5, 7, 11];
+      let num = 1, factors = [];
+      let count = level === 1 ? getRandomInt(2, 3) : (level === 2 ? getRandomInt(3, 4) : getRandomInt(4, 5));
+      for (let i = 0; i < count; i++) {
+        let p = primes[getRandomInt(0, primes.length - 1)];
+        factors.push(p); num *= p;
+      }
+      if (num < 10) return this[0](level); 
+      factors.sort((a, b) => a - b);
+      
+      let steps = `Раскладываем ${num}:<br>`;
+      let temp = num;
+      factors.forEach(f => { steps += `${temp} : ${f} = ${temp/f}<br>`; temp /= f; });
+      
+      return { q: `Разложите на простые множители число <strong>${num}</strong>.`, a: factors.join('*'), s: steps };
+    },
+    1: function(level) {
+      let a = level === 1 ? getRandomInt(10, 30) : (level === 2 ? getRandomInt(30, 80) : getRandomInt(80, 200));
+      let b = level === 1 ? getRandomInt(10, 30) : (level === 2 ? getRandomInt(30, 80) : getRandomInt(80, 200));
+      const isNod = Math.random() > 0.5;
+      
+      if (isNod) {
+        let g = getGCD(a, b);
+        return { q: `Найдите <strong>НОД</strong> чисел ${a} и ${b}.`, a: g.toString(), s: `Общие делители. НОД = ${g}.` };
+      } else {
+        let l = getLCM(a, b);
+        return { q: `Найдите <strong>НОК</strong> чисел ${a} и ${b}.`, a: l.toString(), s: `Пересечение кратных. НОК = ${l}.` };
+      }
+    },
+    2: function(level) {
+      let k = level === 1 ? getRandomInt(2, 5) : (level === 2 ? getRandomInt(5, 12) : getRandomInt(12, 30));
+      let n1 = level === 1 ? getRandomInt(2, 6) : (level === 2 ? getRandomInt(5, 15) : getRandomInt(10, 40));
+      let n2 = level === 1 ? getRandomInt(2, 6) : (level === 2 ? getRandomInt(5, 15) : getRandomInt(10, 40));
+      if (n1 === n2) n2++; 
+      let num = n1 * k, den = n2 * k;
+      return { q: `Сократите дробь <strong>${num}/${den}</strong>.`, a: `${n1}/${n2}`, s: `Делим верх и низ на ${k}.` };
+    },
+    3: function(level) {
+      let d1 = level === 1 ? getRandomInt(2, 10) : (level === 2 ? getRandomInt(5, 25) : getRandomInt(20, 100));
+      let d2 = level === 1 ? getRandomInt(2, 10) : (level === 2 ? getRandomInt(5, 25) : getRandomInt(20, 100));
+      let n1 = level === 1 ? getRandomInt(1, 5) : (level === 2 ? getRandomInt(2, 15) : getRandomInt(5, 60));
+      let n2 = level === 1 ? getRandomInt(1, 5) : (level === 2 ? getRandomInt(2, 15) : getRandomInt(5, 60));
+
+      let sign = Math.random() > 0.5 ? '+' : '−';
+      if (sign === '−' && (n1 * d2 < n2 * d1)) { [n1, n2] = [n2, n1]; [d1, d2] = [d2, d1]; }
+
+      let commonDen = getLCM(d1, d2);
+      let m1 = commonDen / d1, m2 = commonDen / d2;
+      let rNum = n1 * m1 + (sign === '+' ? 1 : -1) * (n2 * m2);
+      let ans = simplifyFraction(rNum, commonDen);
+
+      return { q: `Вычислите: <strong>${n1}/${d1} ${sign} ${n2}/${d2}</strong>`, a: ans, s: `Приводим к ${commonDen}.` };
+    },
+    4: function(level) {
+      let n1 = level === 1 ? getRandomInt(1, 6) : (level === 2 ? getRandomInt(3, 15) : getRandomInt(10, 40));
+      let d1 = level === 1 ? getRandomInt(2, 8) : (level === 2 ? getRandomInt(4, 20) : getRandomInt(10, 50));
+      let n2 = level === 1 ? getRandomInt(1, 6) : (level === 2 ? getRandomInt(3, 15) : getRandomInt(10, 40));
+      let d2 = level === 1 ? getRandomInt(2, 8) : (level === 2 ? getRandomInt(4, 20) : getRandomInt(10, 50));
+      let isMult = Math.random() > 0.5;
+      
+      if (isMult) {
+        let ans = simplifyFraction(n1 * n2, d1 * d2);
+        return { q: `Вычислите: <strong>${n1}/${d1} · ${n2}/${d2}</strong>`, a: ans, s: `Умножаем верх на верх, низ на низ.` };
+      } else {
+        let ans = simplifyFraction(n1 * d2, d1 * n2);
+        return { q: `Вычислите: <strong>${n1}/${d1} : ${n2}/${d2}</strong>`, a: ans, s: `Переворачиваем вторую дробь.` };
+      }
+    }
+  };
+
+  function switchTab(index) {
+    document.querySelectorAll('.tab-btn').forEach((btn, i) => btn.classList.toggle('active', i === index));
+    document.querySelectorAll('.tab-content').forEach((el, i) => el.classList.toggle('active', i === index));
+    if (!currentTaskData[index]) nextTask(index);
+  }
+
+  function setLevel(tabIndex, level) {
+    currentLevels[tabIndex] = level;
+    document.querySelectorAll(`#levels-${tabIndex} .level-btn`).forEach(btn => {
+      btn.classList.toggle('active', parseInt(btn.dataset.level) === level);
+    });
+    const badge = document.getElementById(`badge-${tabIndex}`);
+    badge.className = `task-badge l${level}`;
+    badge.textContent = level === 1 ? 'Уровень 1 · Базовый' : (level === 2 ? 'Уровень 2 · Продвинутый' : 'Уровень 3 · Большие числа ⭐');
+    document.getElementById(`task-container-${tabIndex}`).classList.toggle('level-3-active', level === 3);
+    nextTask(tabIndex);
+  }
+
+  function nextTask(index) {
+    let level = currentLevels[index];
+    currentTaskData[index] = generators[index](level);
+    
+    document.getElementById(`q-${index}`).innerHTML = currentTaskData[index].q;
+    document.getElementById(`ta-${index}`).innerHTML = `<strong>Ответ:</strong> ${currentTaskData[index].a}`;
+    document.getElementById(`sol-${index}`).innerHTML = `<strong>Как решать:</strong><br><br>${currentTaskData[index].s}`;
+    
+    const input = document.getElementById(`input-${index}`);
+    input.value = ''; input.disabled = false; 
+    document.getElementById(`fb-${index}`).className = 'feedback';
+    document.getElementById(`sol-${index}`).classList.remove('show');
+    document.getElementById(`btn-check-${index}`).style.display = 'inline-block';
+  }
+
+  function toggleSolution(index) {
+    document.getElementById(`sol-${index}`).classList.toggle('show');
+  }
+
+  function parseUserAnswer(str) {
+    str = str.trim().toLowerCase().replace(/,/g, '.');
+    if (str.includes('/')) {
+      const parts = str.split('/');
+      if (parts.length === 2) {
+        const num = parseFloat(parts[0]), den = parseFloat(parts[1]);
+        if (!isNaN(num) && !isNaN(den) && den !== 0) return [num, den];
+      }
+    }
+    const val = parseFloat(str);
+    if (!isNaN(val)) return [val, 1];
+    return null;
+  }
+
+  function checkAnswer(index) {
+    const input = document.getElementById(`input-${index}`);
+    const feedback = document.getElementById(`fb-${index}`);
+    const userStr = input.value.trim();
+    if (!userStr) return;
+
+    attempts++;
+    let isCorrect = false;
+
+    if (index === 0) {
+      let uNums = userStr.replace(/[^0-9]/g, ' ').trim().split(/\s+/).map(Number).filter(n => !isNaN(n));
+      let cNums = currentTaskData[index].a.split('*').map(Number);
+      uNums.sort((a,b) => a-b); cNums.sort((a,b) => a-b);
+      if (uNums.length === cNums.length && uNums.every((val, i) => val === cNums[i])) isCorrect = true;
+    } else {
+      const userFrac = parseUserAnswer(userStr);
+      const correctFrac = parseUserAnswer(currentTaskData[index].a);
+      if (userFrac && correctFrac && Math.abs(userFrac[0] * correctFrac[1]) === Math.abs(correctFrac[0] * userFrac[1])) isCorrect = true;
+    }
+
+    if (isCorrect) {
+      score++; streak++;
+      feedback.className = 'feedback show success';
+      feedback.innerHTML = '✅ <strong>Верно!</strong>';
+    } else {
+      streak = 0;
+      feedback.className = 'feedback show error';
+      feedback.innerHTML = '❌ <strong>Не совсем.</strong> Посмотрите на схему выше или откройте решение.';
+    }
+
+    document.getElementById('score').textContent = score;
+    document.getElementById('attempts').textContent = attempts;
+    document.getElementById('streak').textContent = streak;
+    document.getElementById(`btn-check-${index}`).style.display = 'none';
+    input.disabled = true;
+  }
+
+  window.onload = () => nextTask(0);
+</script>
+
 </body>
 </html>
